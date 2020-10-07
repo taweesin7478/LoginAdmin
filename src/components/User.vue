@@ -766,14 +766,10 @@ export default {
         }
       }
       data_target["role"] = roles_id;
-      console.log("data end", data_target);
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/updatestatus",
         data_target
       );
-      // .then((res) => {
-      //   console.log(res);
-      // });
       this.admin = [];
       this.host = [];
       this.users = [];

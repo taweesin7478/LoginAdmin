@@ -203,7 +203,6 @@ export default {
           }
           ///////////////////////////////////////////////////////////////////////
           else if (status == "Fail") {
-            console.log("START ERROR");
             this.notReady = false;
             this.loading = false;
             this.alertType = "error";
