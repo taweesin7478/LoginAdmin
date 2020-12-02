@@ -3,32 +3,26 @@
     <div>
       <v-row class="top-bar">
         <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp">
-          <v-toolbar-title
-            @click.stop="drawer = !drawer"
-            class="web-name hidden-sm-and-down"
-          >
+          <v-toolbar-title @click.stop="drawer = !drawer" class="web-name hidden-sm-and-down">
             <!-- web -->
             <!-- <img width="120px" height="70px" style="margin-top:5px;" src="https://www.img.in.th/images/ff8d1d0be8793accdea55989cf4f3723.png" > -->
             <!--one style-->
             <img
               width="120px"
               height="60px"
-              style="margin-top: 5px"
+              style="margin-top:5px;"
               src="https://www.inet.co.th/assets/img/newlogo.png"
             />
             <!--inet style-->
             <!-- <img src="https://www.img.in.th/images/02af060bc8df3d82297092e19f0ad406.png" height="70px"> -->
           </v-toolbar-title>
-          <v-toolbar-title
-            @click.stop="drawer = !drawer"
-            class="web-name hidden-md-and-up"
-          >
+          <v-toolbar-title @click.stop="drawer = !drawer" class="web-name hidden-md-and-up">
             <!-- <img width="75px" height="50px" style="margin-top:5px;" src="https://www.img.in.th/images/ff8d1d0be8793accdea55989cf4f3723.png" > -->
             <!--one style-->
             <img
               width="120px"
               height="60px"
-              style="margin-top: 5px"
+              style="margin-top:5px;"
               src="https://www.inet.co.th/assets/img/newlogo.png"
             />
             <!--inet style-->
@@ -38,7 +32,7 @@
           <div class="pr-5"></div>
 
           <v-divider class="mx-2" vertical></v-divider>
-          <div style="margin-left: auto; width: 20%">
+          <div style="margin-left: auto; width:20%;">
             <v-menu offset-y>
               <template v-slot:activator="{ on }">
                 <v-card v-on="on" flat>
@@ -48,9 +42,7 @@
                     </v-list-item-avatar>
 
                     <v-list-item-content class="hidden-sm-and-down">
-                      <v-list-item-title class="font-size-14">{{
-                        account_name
-                      }}</v-list-item-title>
+                      <v-list-item-title class="font-size-14">{{account_name}}</v-list-item-title>
                     </v-list-item-content>
 
                     <v-list-item-icon>
@@ -61,9 +53,7 @@
               </template>
               <v-list class="menu-dropdown">
                 <v-list-item v-on:click="logout()">
-                  <v-list-item-title class="logout"
-                    >ออกจากระบบ</v-list-item-title
-                  >
+                  <v-list-item-title class="logout">ออกจากระบบ</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -75,29 +65,22 @@
         v-model="drawer"
         :clipped="$vuetify.breakpoint.lgAndUp"
         app
-        style="z-index: 17"
+        style="z-index:17;"
       >
         <v-list class="left-bar pt-16 mt-2" dense nav>
           <template v-for="menuLeft in menusLeft">
-            <v-row
-              v-if="menuLeft.heading"
-              :key="menuLeft.heading"
-              align="center"
-            ></v-row>
+            <v-row v-if="menuLeft.heading" :key="menuLeft.heading" align="center"></v-row>
             <v-list-group
               v-else-if="menuLeft.children"
               :key="menuLeft.title"
               v-model="menuLeft.model"
-              :prepend-icon="
-                menuLeft.model ? menuLeft.icon : menuLeft['icon-alt']
-              "
+              :prepend-icon="menuLeft.model ? menuLeft.icon 
+            : menuLeft['icon-alt']"
               append-icon
             >
               <template v-slot:activator>
                 <v-list-item-content>
-                  <v-list-item-title class="side-menu">{{
-                    menuLeft.title
-                  }}</v-list-item-title>
+                  <v-list-item-title class="side-menu">{{ menuLeft.title }}</v-list-item-title>
                 </v-list-item-content>
               </template>
               <v-list-item
@@ -111,9 +94,7 @@
                   <v-icon>{{ child.icon }}</v-icon>
                 </v-list-item-action>
                 <v-list-item-content>
-                  <v-list-item-title class="side-menu">{{
-                    child.title
-                  }}</v-list-item-title>
+                  <v-list-item-title class="side-menu">{{ child.title }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list-group>
@@ -129,16 +110,14 @@
                 <v-icon>{{ menuLeft.icon }}</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title class="side-menu">{{
-                  menuLeft.title
-                }}</v-list-item-title>
+                <v-list-item-title class="side-menu">{{ menuLeft.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </template>
         </v-list>
       </v-navigation-drawer>
 
-      <v-content style="background: #f5f5f5">
+      <v-content style="background: #F5F5F5;">
         <v-container fluid class="content">
           <router-view />
         </v-container>
@@ -163,12 +142,12 @@ export default {
         path: "/User",
         show: true,
       },
-      {
-        icon: "mdi-file-document",
-        title: "ความคิดเห็นผู้ใช้งาน",
-        path: "/Feedback",
-        show: true,
-      },
+      // {
+      //   icon: "mdi-radioactive",
+      //   title: "ทดสอบ",
+      //   path: "/Test",
+      //   show: true,
+      // },
     ],
   }),
   mounted() {

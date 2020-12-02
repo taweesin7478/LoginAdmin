@@ -31,7 +31,7 @@
                 <v-tab ripple @click="clear()">ผู้ดูแลระบบ</v-tab>
                 <v-tab ripple @click="clear()">ผู้ดูแลห้อง</v-tab>
                 <v-tab ripple @click="clear()">ผู้ใช้งาน</v-tab>
-                <!-- <v-tab ripple @click="clear()">ถูกปิด/ถูกแบน</v-tab> -->
+                <v-tab ripple @click="clear()">บุคคลทั่วไป</v-tab>
                 <v-tab-item>
                   <!-- /////////////////////////////////////////////////////////// -->
                   <v-card flat>
@@ -114,11 +114,13 @@
                                         v-model="editedItem_admin.status"
                                         label="สิทธิ์"
                                     ></v-text-field>-->
+                                    <v-col cols="12" sm="12" md="12">
                                     <v-select
                                       v-model="editedItem_admin.status"
                                       :items="items"
                                       label="สิทธิ์"
                                     ></v-select>
+                                    </v-col>
                                     <!-- </v-col> -->
                                   </v-row>
                                 </v-container>
@@ -235,11 +237,13 @@
                                     <!-- <v-col cols="12" sm="6" md="4">
                                       <v-text-field v-model="editedItem_host.status" label="สิทธิ์"></v-text-field>
                                     </v-col>-->
+                                    <v-col cols="12" sm="12" md="12">
                                     <v-select
                                       v-model="editedItem_host.status"
                                       :items="items"
                                       label="สิทธิ์"
                                     ></v-select>
+                                    </v-col>
                                   </v-row>
                                 </v-container>
                               </v-card-text>
@@ -354,11 +358,13 @@
                                         v-model="editedItem_users.status"
                                         label="สิทธิ์"
                                     ></v-text-field>-->
+                                    <v-col cols="12" sm="12" md="12">
                                     <v-select
                                       v-model="editedItem_users.status"
                                       :items="items"
                                       label="สิทธิ์"
                                     ></v-select>
+                                    </v-col>
                                     <!-- </v-col> -->
                                   </v-row>
                                 </v-container>
@@ -400,7 +406,7 @@
                   <v-card flat>
                     <v-data-table
                       :headers="headers"
-                      :items="banish"
+                      :items="citizen"
                       :search="search"
                       :items-per-page="10"
                       multi-sort
@@ -419,11 +425,11 @@
                               font-family: 'Sarabun', sans-serif !important;
                             "
                           ></v-text-field>
-                          <v-dialog v-model="dialog_banish" max-width="500px">
+                          <v-dialog v-model="dialog_citizen" max-width="500px">
                             <v-card>
                               <v-card-title>
                                 <span class="headline">{{
-                                  formTitle_banish
+                                  formTitle_citizen
                                 }}</span>
                               </v-card-title>
 
@@ -432,56 +438,58 @@
                                   <v-row justify="center">
                                     <v-col cols="12" sm="6" md="4">
                                       <v-text-field
-                                        v-model="editedItem_banish.user"
+                                        v-model="editedItem_citizen.user"
                                         label="ชื่อผู้ใช้"
                                         readonly
                                       ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="4">
                                       <v-text-field
-                                        v-model="editedItem_banish.fname"
+                                        v-model="editedItem_citizen.fname"
                                         label="ชื่อ"
                                         readonly
                                       ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="4">
                                       <v-text-field
-                                        v-model="editedItem_banish.lname"
+                                        v-model="editedItem_citizen.lname"
                                         label="นามสกุล"
                                         readonly
                                       ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="4">
                                       <v-text-field
-                                        v-model="editedItem_banish.company"
+                                        v-model="editedItem_citizen.company"
                                         label="Company"
                                         readonly
                                       ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="4">
                                       <v-text-field
-                                        v-model="editedItem_banish.phone"
+                                        v-model="editedItem_citizen.phone"
                                         label="เบอร์โทรศัพท์"
                                         readonly
                                       ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="4">
                                       <v-text-field
-                                        v-model="editedItem_banish.mail"
+                                        v-model="editedItem_citizen.mail"
                                         label="E-mail"
                                         readonly
                                       ></v-text-field>
                                     </v-col>
                                     <!-- <v-col cols="12" sm="6" md="4"> -->
                                     <!-- <v-text-field
-                                        v-model="editedItem_banish.status"
+                                        v-model="editedItem_citizen.status"
                                         label="สิทธิ์"
                                     ></v-text-field>-->
+                                    <v-col cols="12" sm="12" md="12">
                                     <v-select
-                                      v-model="editedItem_banish.status"
+                                      v-model="editedItem_citizen.status"
                                       :items="items"
                                       label="สิทธิ์"
                                     ></v-select>
+                                    </v-col>
                                     <!-- </v-col> -->
                                   </v-row>
                                 </v-container>
@@ -492,13 +500,13 @@
                                 <v-btn
                                   color="blue darken-1"
                                   text
-                                  @click="close_banish"
+                                  @click="close_citizen"
                                   >ยกเลิก</v-btn
                                 >
                                 <v-btn
                                   color="blue darken-1"
                                   text
-                                  @click="save_banish"
+                                  @click="save_citizen"
                                   >บันทึก</v-btn
                                 >
                               </v-card-actions>
@@ -510,7 +518,7 @@
                         <v-icon
                           medium
                           class="mr-2"
-                          @click="editItem_banish(item)"
+                          @click="editItem_citizen(item)"
                           >mdi-account-edit</v-icon
                         >
                         <!-- <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
@@ -531,12 +539,12 @@
 <script>
 export default {
   data: () => ({
-    items: ["admin", "host", "user"],
+    items: ["admin", "host", "user", "citizen"],
     search: "",
     dialog_admin: false,
     dialog_host: false,
     dialog_users: false,
-    dialog_banish: false,
+    dialog_citizen: false,
     headers: [
       {
         text: "ชื่อผู้ใช้",
@@ -556,10 +564,10 @@ export default {
     admin: [],
     users: [],
     host: [],
-    banish: [],
+    citizen: [],
     editedIndex_admin: -1,
     editedIndex_users: -1,
-    editedIndex_banish: -1,
+    editedIndex_citizen: -1,
     editedItem_admin: {
       user: "",
       fname: "",
@@ -587,7 +595,7 @@ export default {
       mail: "",
       status: "",
     },
-    editedItem_banish: {
+    editedItem_citizen: {
       user: "",
       fname: "",
       lname: "",
@@ -616,8 +624,8 @@ export default {
     formTitle_users() {
       return this.editedIndex_users === -1 ? "New User" : "แก้ไข ผู้ใช้งาน";
     },
-    formTitle_banish() {
-      return this.editedIndex_banish === -1
+    formTitle_citizen() {
+      return this.editedIndex_citizen === -1
         ? "New User"
         : "แก้ไข ผู้ถูกปิด หรือ ถูกแบน";
     },
@@ -633,8 +641,8 @@ export default {
     dialog_users(val) {
       val || this.close_users();
     },
-    dialog_banish(val) {
-      val || this.close_banish();
+    dialog_citizen(val) {
+      val || this.close_citizen();
     },
   },
 
@@ -677,7 +685,7 @@ export default {
           status: "user",
         },
       ];
-      this.banish = [
+      this.citizen = [
         {
           user: "ban01",
           fname: "ERR",
@@ -685,7 +693,7 @@ export default {
           company: "??",
           phone: "1212312121",
           mail: "B@ZIZI",
-          status: "banish",
+          status: "citizen",
         },
       ];
     },
@@ -702,6 +710,7 @@ export default {
         process.env.VUE_APP_API + "/api/roles/data"
       );
       var roles = API_Roles.data.data;
+      console.log(roles)
       for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < roles.length; j++) {
           if (data[i]["role"] == roles[j]["_id"]) {
@@ -738,6 +747,8 @@ export default {
           this.host.push(data_ALL[0]);
         } else if (role == "user") {
           this.users.push(data_ALL[0]);
+        } else if (role == "citizen") {
+          this.citizen.push(data_ALL[0]);
         }
       }
     },
@@ -766,7 +777,7 @@ export default {
         }
       }
       data_target["role"] = roles_id;
-
+      console.log("data end", data_target);
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/updatestatus",
         data_target
@@ -777,6 +788,7 @@ export default {
       this.admin = [];
       this.host = [];
       this.users = [];
+      this.citizen = [];
       this.alldata();
     },
     ///////////////////////////////////////////////////////////////////////
@@ -798,10 +810,10 @@ export default {
       this.dialog_users = true;
     },
 
-    editItem_banish(item) {
-      this.editedIndex_banish = this.banish.indexOf(item);
-      this.editedItem_banish = Object.assign({}, item);
-      this.dialog_banish = true;
+    editItem_citizen(item) {
+      this.editedIndex_citizen = this.citizen.indexOf(item);
+      this.editedItem_citizen = Object.assign({}, item);
+      this.dialog_citizen = true;
     },
 
     // deleteItem(item) {
@@ -834,11 +846,11 @@ export default {
       });
     },
 
-    close_banish() {
-      this.dialog_banish = false;
+    close_citizen() {
+      this.dialog_citizen = false;
       this.$nextTick(() => {
-        this.editedItem_banish = Object.assign({}, this.defaultItem);
-        this.editedIndex_banish = -1;
+        this.editedItem_citizen = Object.assign({}, this.defaultItem);
+        this.editedIndex_citizen = -1;
       });
     },
 
@@ -878,17 +890,17 @@ export default {
       this.close_users();
     },
 
-    save_banish() {
-      if (this.editedIndex_banish > -1) {
+    save_citizen() {
+      if (this.editedIndex_citizen > -1) {
         Object.assign(
-          this.banish[this.editedIndex_banish],
-          this.editedItem_banish
+          this.citizen[this.editedIndex_citizen],
+          this.editedItem_citizen
         );
-        this.update(this.banish[this.editedIndex_banish]);
+        this.update(this.citizen[this.editedIndex_citizen]);
       } else {
-        this.banish.push(this.editedItem_banish);
+        this.citizen.push(this.editedItem_citizen);
       }
-      this.close_banish();
+      this.close_citizen();
     },
     clear() {
       this.search = "";

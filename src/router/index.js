@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Layout from '../views/Layout.vue'
 import User from '../views/User.vue'
-import Feedback from '../views/Feedback.vue'
+import Test from '../views/Test.vue'
 
 Vue.use(VueRouter)
 
@@ -29,7 +29,7 @@ const router = new VueRouter({
             component: Layout,
             children: [
                 { path: '/User', name: 'User', component: User, meta: { requiresAuth: true } },
-                { path: '/Feedback', name: 'Feedback', component: Feedback, meta: { requiresAuth: true } },
+                { path: '/Test', name: 'Test', component: Test, meta: { requiresAuth: true } },
             ]
         },
     ]
