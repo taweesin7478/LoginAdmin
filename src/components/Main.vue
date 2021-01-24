@@ -142,6 +142,12 @@ export default {
         path: "/User",
         show: true,
       },
+      {
+        icon: "mdi-clipboard-text",
+        title: "Dashboard",
+        path: "/Dashboard",
+        show: true,
+      },
       // {
       //   icon: "mdi-radioactive",
       //   title: "ทดสอบ",
