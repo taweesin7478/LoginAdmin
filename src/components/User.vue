@@ -862,7 +862,7 @@ export default {
       );
       var ssr = API_ssr.data.data;
       // console.log(ssr);
-      console.log(data);
+      // console.log(data);
       for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < roles.length; j++) {
           if (data[i]["role"] == roles[j]["_id"]) {
@@ -870,13 +870,13 @@ export default {
           }
         }
         for (let k = 0; k < ssr.length; k++) {
-          if (data[i]["_id"] == ssr[k]["user_id"]) {
+          if (data[i]["oneid"] == ssr[k]["oneid"]) {
             on_status = "ON";
+            break
           }else{
             on_status = "OFF";
           }
         }
-        // console.log(on_status)
         var date = data[i]["created_at"].split("T")[0].split("-")[2]
         +"/"+data[i]["created_at"].split("T")[0].split("-")[1]
         +"/"+data[i]["created_at"].split("T")[0].split("-")[0];
