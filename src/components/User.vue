@@ -50,6 +50,10 @@
                           จำนวนผู้ใช้ทั้งหมด {{total_all}} คน
                           </v-card-title>
                           <v-spacer></v-spacer>
+                          <v-card-title>
+                          Online {{online_total}} คน 
+                          </v-card-title>
+                          <v-spacer></v-spacer>
                           <v-text-field
                             v-model="search"
                             append-icon="mdi-magnify"
@@ -201,6 +205,10 @@
                           จำนวน BUSINESS ทั้งหมด {{total_bussiness}} คน
                           </v-card-title>
                           <v-spacer></v-spacer>
+                          <v-card-title>
+                          Online {{online_bussiness}} คน 
+                          </v-card-title>
+                          <v-spacer></v-spacer>
                           <v-text-field
                             v-model="search"
                             append-icon="mdi-magnify"
@@ -344,6 +352,10 @@
                           <v-spacer></v-spacer>
                           <v-card-title>
                           จำนวน CITIZEN ทั้งหมด {{total_citizen}} คน
+                          </v-card-title>
+                          <v-spacer></v-spacer>
+                          <v-card-title>
+                          Online {{online_citizen}} คน 
                           </v-card-title>
                           <v-spacer></v-spacer>
                           <v-text-field
@@ -495,6 +507,10 @@
                           <v-spacer></v-spacer>
                           <v-card-title>
                           จำนวน USER ทั้งหมด {{total_user}} คน
+                          </v-card-title>
+                          <v-spacer></v-spacer>
+                          <v-card-title>
+                          Online {{online_user}} คน 
                           </v-card-title>
                           <v-spacer></v-spacer>
                           <v-text-field
@@ -672,6 +688,10 @@ export default {
     total_bussiness: 0,
     total_citizen: 0,
     total_user: 0,
+    online_total: 0,
+    online_bussiness: 0,
+    online_citizen: 0,
+    online_user: 0,
     editedIndex_admin: -1,
     editedIndex_users: -1,
     editedIndex_citizen: -1,
@@ -842,10 +862,13 @@ export default {
       var on_status;
       var role;
       var N_total = 0;
-      // var N_admin = 1;
       var N_host = 0;
       var N_citizen = 0;
       var N_user = 0;
+      var online_total = 0;
+      var host_online = 0;
+      var citizen_online = 0;
+      var user_online = 0;
       var date_NF = Date.now();
       var date_now_1 = new Date(date_NF);
       var date_now_2 = date_now_1.toISOString();
@@ -861,8 +884,6 @@ export default {
         process.env.VUE_APP_API + "/api/rooms/data"
       );
       var ssr = API_ssr.data.data;
-      // console.log(ssr);
-      // console.log(data);
       for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < roles.length; j++) {
           if (data[i]["role"] == roles[j]["_id"]) {
@@ -899,7 +920,6 @@ export default {
               status: role,
             },
           ];
-          // N_admin =+ 1;
         } if (role == "host") {
           data_ALL = [
             {
@@ -918,6 +938,10 @@ export default {
           ];
           N_host = N_host + 1;
           N_total = N_total + 1;
+          if(on_status == "ON"){
+            host_online = host_online + 1;
+            online_total = online_total + 1;
+          }
         } if (role == "user") {
           data_ALL = [
             {
@@ -936,6 +960,10 @@ export default {
           ];
           N_user = N_user + 1;
           N_total = N_total + 1;
+          if(on_status == "ON"){
+            user_online = user_online + 1;
+            online_total = online_total + 1;
+          }
         } if (role == "citizen") {
           data_ALL = [
             {
@@ -954,6 +982,10 @@ export default {
           ];
           N_citizen = N_citizen + 1;
           N_total = N_total + 1;
+          if(on_status == "ON"){
+            citizen_online = citizen_online + 1;
+            online_total = online_total + 1;
+          }
         } 
         data_Update = [
           {
@@ -983,6 +1015,10 @@ export default {
       this.total_bussiness = N_host
       this.total_citizen = N_citizen
       this.total_user = N_user
+      this.online_total = online_total
+      this.online_bussiness = host_online
+      this.online_citizen = citizen_online
+      this.online_user = user_online
     },
     async update(data) {
       var API_Data = await this.axios.get(
@@ -1009,14 +1045,10 @@ export default {
         }
       }
       data_target["role"] = roles_id;
-      console.log("data end", data_target);
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/updatestatus",
         data_target
       );
-      // .then((res) => {
-      //   console.log(res);
-      // });
       this.admin = [];
       this.host = [];
       this.users = [];

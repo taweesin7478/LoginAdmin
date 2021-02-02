@@ -27,12 +27,6 @@
                       <v-btn text elevation="4" medium small v-on:click="data_all('today')">
                       TODAY
                       </v-btn>
-                      <!--<v-btn text elevation="4" medium small v-on:click="data_all('week')">
-                      WEEK
-                      </v-btn>
-                      <v-btn text elevation="4" medium small v-on:click="data_all('month')">
-                      MONTH
-                      </v-btn>-->
                       <v-btn text elevation="4" medium small v-on:click="data_all('all')">
                       ADD ALL
                       </v-btn>
@@ -235,15 +229,23 @@ export default {
       if( data_type == undefined){
         data_type = "today"
       }
-      console.log(data_type);
       var timenow = new Date();
       var timenow_day = timenow.getDate();
       var timenow_month = timenow.getMonth() + 1;
       var timenew_year = timenow.getFullYear();
-      var day_begin = timenow_day + "/" + timenow_month + "/" + timenew_year;
-      var week_begin = timenow_day + "/" + timenow_month + "/" + timenew_year;
-      var month_begin = timenow_day + "/" + timenow_month + "/" + timenew_year;
-
+      console.log(timenow_day)
+      if(timenow_day<10){
+        var string_day = "0"+timenow_day
+      }else{
+        string_day = timenow_day
+      }
+      if(timenow_month<10){
+        var string_month = "0"+timenow_month
+      }else{
+        string_month = timenow_month
+      }
+      var day_begin = string_day + "/" + string_month + "/" + timenew_year;
+      console.log(day_begin)
       // var timenow_Hours = timenow.getHours();
       // var timenow_Minut = timenow.getMinutes();
       // var timenow_Secon = timenow.getSeconds();
@@ -251,10 +253,6 @@ export default {
 
       if(data_type == "today"){
         this.date_show = day_begin;
-      }else if(data_type == "week"){
-        this.date_show = day_begin+" - "+week_begin;
-      }else if(data_type == "month"){
-        this.date_show = day_begin+" - "+month_begin;
       }else{
         this.date_show = "ALL";
       }
@@ -328,15 +326,12 @@ export default {
       this.series = total_push
     },
     async meeting_dashboard(){
-      console.log(this.date_show);
       var N_meet = 0;
       var data_ALL = [];
       var history_rooms = await this.axios.get(
         process.env.VUE_APP_API + "/api/History_rooms/data"
       );
-      console.log("history_rooms")
       var data = history_rooms.data.data
-      console.log(data)
       for (let i = 0; i < data.length; i++) {
         if (this.date_show == data[i]["date"]) {
           data_ALL = [
