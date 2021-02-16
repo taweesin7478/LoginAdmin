@@ -24,11 +24,18 @@
                       align="center"
                       justify="space-around"
                     >
-                      <v-btn text elevation="4" medium small v-on:click="data_all('today')">
+                      <!--<v-btn text elevation="4" medium small v-on:click="data_all('today')">
                       TODAY
-                      </v-btn>
-                      <v-btn text elevation="4" medium small v-on:click="data_all('all')">
+                      </v-btn>-->
+                      <div id="app">
+                        <input type="date" v-model="date" value="date" @change="select_data(date)"/>
+                      </div>
+                      <v-btn text elevation="4" medium small v-show="!hidden" v-on:click="data_all('ALL')">
                       ADD ALL
+                      </v-btn>
+                      <v-btn text elevation="4" small color="primary" v-show="hidden" v-on:click="select_data(date)" @change="select_data(date)">
+                      Close
+                      <v-icon>mdi-close-circle-outline</v-icon>
                       </v-btn>
                     </v-row>
                   </v-toolbar>
@@ -139,7 +146,39 @@
                           :headers="headers"
                           :items="meeting"
                           :search="search"
-                        ></v-data-table>
+                        >
+                        <template v-slot:top>
+                          <v-dialog v-model="History" max-width="600px">
+                          <v-card>
+                            <v-card-title>
+                              <span class="headline">{{
+                                formTitle_users
+                              }}</span>
+                              <v-card-text>
+                                <v-container>
+                                  <v-row justify="center">
+                                    <v-col cols="12" sm="12" md="12">
+                                    <v-data-table
+                                      :headers="header_member"
+                                      :items="desserts"
+                                    ></v-data-table>
+                                    </v-col>
+                                  </v-row>
+                                </v-container>
+                              </v-card-text>
+                            </v-card-title>
+                          </v-card>
+                          </v-dialog>
+                        </template>
+                        <template v-slot:item.member="item">
+                          <v-icon
+                            medium
+                            class="mr-2"
+                            @click="data_all_name(item)"
+                            >mdi-clipboard-account</v-icon
+                          >
+                        </template>
+                        </v-data-table>
                       </v-card>
                     </v-flex>
                   </v-layout>
@@ -162,8 +201,11 @@ export default {
   },
   data() {
     return {
+      History: false,
+      hidden: false,
       total_user: 0,
       total_meeting: 0,
+      date: new Date().toISOString().substr(0, 10),
       date_show: "",
       series: [1 , 1 , 1],
       chartOptions: {
@@ -199,26 +241,21 @@ export default {
         { text: 'start time' , value: 's_time'},
         { text: 'end time' , value: 'e_time'},
         { text: 'จำนวนผู้ร่วมประชุม' , value: 'attendee'},
+        { text: "รายชื่อผู้ร่วมประชุม", value: "member", sortable: false },
       ],
-      meeting: [
-        // {
-        //   room_name: 'Meeting 01',
-        //   owner: 'User-01',
-        //   date: '',
-        //   s_time: '',
-        //   e_time: '',
-        //   attendee: '',
-        // },
-        // {
-        //   room_name: 'Meeting 02',
-        //   owner: 'User-02',
-        //   date: '',
-        //   s_time: '',
-        //   e_time: '',
-        //   attendee: '',
-        // },
+      header_member: [
+        { text: 'รายชื่อ' , align: 'start' , filterable: false , value: 'member_name'},
+        { text: 'เวลาเข้าห้องประชุม', value: 'join_at' },
+        { text: 'เวลาออกห้องประชุม', value: 'out_at' },
       ],
+      desserts: [],
+      meeting: [],
     };
+  },
+  watch: {
+    dialog_admin(val) {
+      val || this.close_admin();
+    },
   },
   created() {
     this.date_time();
@@ -233,7 +270,6 @@ export default {
       var timenow_day = timenow.getDate();
       var timenow_month = timenow.getMonth() + 1;
       var timenew_year = timenow.getFullYear();
-      console.log(timenow_day)
       if(timenow_day<10){
         var string_day = "0"+timenow_day
       }else{
@@ -245,7 +281,6 @@ export default {
         string_month = timenow_month
       }
       var day_begin = string_day + "/" + string_month + "/" + timenew_year;
-      console.log(day_begin)
       // var timenow_Hours = timenow.getHours();
       // var timenow_Minut = timenow.getMinutes();
       // var timenow_Secon = timenow.getSeconds();
@@ -328,11 +363,29 @@ export default {
     async meeting_dashboard(){
       var N_meet = 0;
       var data_ALL = [];
+      var attendee_All = [];
       var history_rooms = await this.axios.get(
         process.env.VUE_APP_API + "/api/History_rooms/data"
       );
       var data = history_rooms.data.data
       for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i]["member"].length; j++) {
+          if(data[i]["member"][j]["email"] != undefined){
+            attendee_All.push({
+              attendee: data[i]["member"][j]["email"].split("@")[0],
+              join_at: data[i]["member"][j]["join_at"],
+              out_at: data[i]["member"][j]["out_at"],
+            })
+          }
+          if(data[i]["member"][j]["attendee"] != undefined){
+            // attendee_All.push(data[i]["member"][j]["attendee"].split("-")[0])
+            attendee_All.push({
+              attendee: data[i]["member"][j]["attendee"].split("-")[0],
+              join_at: data[i]["member"][j]["join_at"],
+              out_at: data[i]["member"][j]["out_at"],
+            })
+          }
+        }
         if (this.date_show == data[i]["date"]) {
           data_ALL = [
             {
@@ -342,6 +395,7 @@ export default {
               s_time: data[i]["start_time"],
               e_time: data[i]["end_time"],
               attendee: data[i]["attendee"],
+              member: attendee_All,
             },
           ];
           N_meet = N_meet + 1;
@@ -355,17 +409,54 @@ export default {
               s_time: data[i]["start_time"],
               e_time: data[i]["end_time"],
               attendee: data[i]["attendee"],
+              member: attendee_All,
             },
           ];
           N_meet = N_meet + 1;
           this.meeting.push(data_ALL[0]);
         }
+        attendee_All = [];
       }
       this.total_meeting = N_meet
     },
+    data_all_name (item) {
+      this.desserts = [];
+      var member = [];
+      for (let i = 0; i < item["item"]["member"].length; i++) {
+        if(item["item"]["member"][i]["out_at"] != ""){
+          member = [
+            {
+              member_name: item["item"]["member"][i]["attendee"],
+              join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
+              out_at: new Date(item["item"]["member"][i]["out_at"]).toLocaleTimeString(),
+            },
+          ];
+        } else {
+          member = [
+            {
+              member_name: item["item"]["member"][i]["attendee"],
+              join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
+              out_at: "",
+            },
+          ];
+        }
+        this.desserts.push(member[0]);
+      }
+      this.History = true;
+    },
+    select_data (value) {
+      this.meeting = [];
+      this.hidden = false;
+      this.date_show = value.split("-")[2]+"/"+value.split("-")[1]+"/"+value.split("-")[0]
+      this.User_dashboard();
+      this.meeting_dashboard();
+    },
     data_all:function (data) {
       this.meeting = [];
-      this.date_time(data);
+      this.hidden = true;
+      this.date_show = data;
+      this.User_dashboard();
+      this.meeting_dashboard();
     },
   }
 };

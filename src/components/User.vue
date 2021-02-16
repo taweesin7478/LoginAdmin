@@ -2,6 +2,11 @@
   <v-layout wrap>
     <v-flex xs12>
       <v-card height="100%" flat color="#f5f5f5">
+        <v-dialog v-model="alert" width="50%" height="100%">
+          <v-alert type="error" height="100%" >
+            รหัสนี้ไม่สามารถทำการแก้ไขได้
+          </v-alert>
+        </v-dialog>
         <v-container fluid grid-list-lg class="pa-0 pl-0 pr-0">
           <v-row justify="center">
             <div class="loading-myform-block" v-if="notReady"></div>
@@ -40,6 +45,8 @@
                       :items="admin"
                       :search="search"
                       :items-per-page="10"
+                      :sort-by="['date']"
+                      :sort-desc="[true]"
                       multi-sort
                       class="elevation-1"
                     >
@@ -167,6 +174,12 @@
                           </v-dialog>
                         </v-toolbar>
                       </template>
+                      <template v-slot:item.date="{ item }">
+                        {{ new Date(item.date).toLocaleDateString('fr') }}
+                      </template>
+                      <template v-slot:item.update="{ item }">
+                        {{ new Date(item.update).toLocaleDateString('fr') }}
+                      </template>
                       <template v-slot:item.online="{ item }">
                         <v-chip
                           :color="getColor(item.online)"
@@ -195,6 +208,8 @@
                       :items="host"
                       :search="search"
                       :items-per-page="10"
+                      :sort-by="['date']"
+                      :sort-desc="[true]"
                       multi-sort
                       class="elevation-1"
                     >
@@ -319,6 +334,12 @@
                           </v-dialog>
                         </v-toolbar>
                       </template>
+                      <template v-slot:item.date="{ item }">
+                        {{ new Date(item.date).toLocaleDateString('fr') }}
+                      </template>
+                      <template v-slot:item.update="{ item }">
+                        {{ new Date(item.update).toLocaleDateString('fr') }}
+                      </template>
                       <template v-slot:item.online="{ item }">
                         <v-chip
                           :color="getColor(item.online)"
@@ -344,6 +365,8 @@
                       :items="citizen"
                       :search="search"
                       :items-per-page="10"
+                      :sort-by="['date']"
+                      :sort-desc="[true]"
                       multi-sort
                       class="elevation-1"
                     >
@@ -471,6 +494,12 @@
                           </v-dialog>
                         </v-toolbar>
                       </template>
+                      <template v-slot:item.date="{ item }">
+                        {{ new Date(item.date).toLocaleDateString('fr') }}
+                      </template>
+                      <template v-slot:item.update="{ item }">
+                        {{ new Date(item.update).toLocaleDateString('fr') }}
+                      </template>
                       <template v-slot:item.online="{ item }">
                         <v-chip
                           :color="getColor(item.online)"
@@ -499,6 +528,8 @@
                       :items="users"
                       :search="search"
                       :items-per-page="10"
+                      :sort-by="['date']"
+                      :sort-desc="[true]"
                       multi-sort
                       class="elevation-1"
                     >
@@ -626,6 +657,12 @@
                           </v-dialog>
                         </v-toolbar>
                       </template>
+                      <template v-slot:item.date="{ item }">
+                        {{ new Date(item.date).toLocaleDateString('fr') }}
+                      </template>
+                      <template v-slot:item.update="{ item }">
+                        {{ new Date(item.update).toLocaleDateString('fr') }}
+                      </template>
                       <template v-slot:item.online="{ item }">
                         <v-chip
                           :color="getColor(item.online)"
@@ -660,7 +697,9 @@
 export default {
   data: () => ({
     items: ["host", "user", "citizen"],
+    limit: "",
     search: "",
+    alert: false,
     dialog_admin: false,
     dialog_host: false,
     dialog_users: false,
@@ -751,6 +790,10 @@ export default {
       status: "",
     },
   }),
+  mounted() {
+    var data_admin = this.$session.get("data");
+    this.limit = data_admin["No_limit"]
+  },
   computed: {
     formTitle_admin() {
       return this.editedIndex_admin === -1 ? "New User" : "แก้ไข ผู้ดูแลระบบ";
@@ -898,12 +941,6 @@ export default {
             on_status = "OFF";
           }
         }
-        var date = data[i]["created_at"].split("T")[0].split("-")[2]
-        +"/"+data[i]["created_at"].split("T")[0].split("-")[1]
-        +"/"+data[i]["created_at"].split("T")[0].split("-")[0];
-        var update = data[i]["updated_at"].split("T")[0].split("-")[2]
-        +"/"+data[i]["updated_at"].split("T")[0].split("-")[1]
-        +"/"+data[i]["updated_at"].split("T")[0].split("-")[0];
         if (role == "admin") {
           data_ALL = [
             {
@@ -913,8 +950,8 @@ export default {
               lname: data[i]["lastname"],
               company: data[i]["company"],
               phone: data[i]["phonenumber"],
-              date: date,
-              update: update,
+              date: data[i]["created_at"],
+              update: data[i]["updated_at"],
               mail: data[i]["email"],
               online: on_status,
               status: role,
@@ -929,8 +966,8 @@ export default {
               lname: data[i]["lastname"],
               company: data[i]["company"],
               phone: data[i]["phonenumber"],
-              date: date,
-              update: update,
+              date: data[i]["created_at"],
+              update: data[i]["updated_at"],
               mail: data[i]["email"],
               online: on_status,
               status: role,
@@ -951,8 +988,8 @@ export default {
               lname: data[i]["lastname"],
               company: data[i]["company"],
               phone: data[i]["phonenumber"],
-              date: date,
-              update: update,
+              date: data[i]["created_at"],
+              update: data[i]["updated_at"],
               mail: data[i]["email"],
               online: on_status,
               status: role,
@@ -973,8 +1010,8 @@ export default {
               lname: data[i]["lastname"],
               company: data[i]["company"],
               phone: data[i]["phonenumber"],
-              date: date,
-              update: update,
+              date: data[i]["created_at"],
+              update: data[i]["updated_at"],
               mail: data[i]["email"],
               online: on_status,
               status: role,
@@ -1057,27 +1094,43 @@ export default {
     },
     ///////////////////////////////////////////////////////////////////////
     editItem_admin(item) {
-      this.editedIndex_admin = this.admin.indexOf(item);
-      this.editedItem_admin = Object.assign({}, item);
-      this.dialog_admin = true;
+      if (this.limit == true) {
+        this.editedIndex_admin = this.admin.indexOf(item);
+        this.editedItem_admin = Object.assign({}, item);
+        this.dialog_admin = true;
+      } else {
+        this.alert = true;
+      }
     },
 
     editItem_host(item) {
-      this.editedIndex_host = this.host.indexOf(item);
-      this.editedItem_host = Object.assign({}, item);
-      this.dialog_host = true;
+      if (this.limit == true) {
+        this.editedIndex_host = this.host.indexOf(item);
+        this.editedItem_host = Object.assign({}, item);
+        this.dialog_host = true;
+      } else {
+        this.alert = true;
+      }
     },
 
     editItem_users(item) {
-      this.editedIndex_users = this.users.indexOf(item);
-      this.editedItem_users = Object.assign({}, item);
-      this.dialog_users = true;
+      if (this.limit == true) {
+        this.editedIndex_users = this.users.indexOf(item);
+        this.editedItem_users = Object.assign({}, item);
+        this.dialog_users = true;
+      } else {
+        this.alert = true;
+      }
     },
 
     editItem_citizen(item) {
-      this.editedIndex_citizen = this.citizen.indexOf(item);
-      this.editedItem_citizen = Object.assign({}, item);
-      this.dialog_citizen = true;
+      if (this.limit == true) {
+        this.editedIndex_citizen = this.citizen.indexOf(item);
+        this.editedItem_citizen = Object.assign({}, item);
+        this.dialog_citizen = true;
+      } else {
+        this.alert = true;
+      }
     },
 
     // deleteItem(item) {
