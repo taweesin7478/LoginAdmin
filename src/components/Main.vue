@@ -52,6 +52,12 @@
                 </v-card>
               </template>
               <v-list class="menu-dropdown">
+                <v-list-item v-on:click="Admin()" v-show="hidden">
+                  <v-list-item-title class="Admin">จัดการ ADMIN</v-list-item-title>
+                </v-list-item>
+                <v-list-item v-on:click="Remove()" v-show="hidden">
+                  <v-list-item-title class="Remove">จัดการลบ User</v-list-item-title>
+                </v-list-item>
                 <v-list-item v-on:click="logout()">
                   <v-list-item-title class="logout">ออกจากระบบ</v-list-item-title>
                 </v-list-item>
@@ -130,6 +136,8 @@
 export default {
   data: () => ({
     account_name: "",
+    hidden: true,
+    limit: "",
     item: 4,
     logoUrl:
       "https://media.datacenterdynamics.com/media/images/Inet-thailand.2e16d0ba.fill-1200x630.jpg",
@@ -162,6 +170,12 @@ export default {
     }
     var data = this.$session.get("data");
     this.account_name = data["user"];
+    this.limit = data["No_limit"]
+    if (this.limit == true) {
+      this.hidden = true
+    }else{
+      this.hidden = false
+    }
   },
   methods: {
     logout() {
@@ -170,6 +184,12 @@ export default {
       this.$session.clear();
       this.$router.push({ path: "/login" });
     },
+    Admin() {
+      this.$router.push({ path: "/Admin" });
+    },
+    Remove() {
+      this.$router.push({ path: "/Remove" });
+    }
   },
 };
 </script>
@@ -261,6 +281,17 @@ export default {
 }
 
 .logout-icon {
+  color: grey;
+  margin-right: 5%;
+  font-size: 25px;
+}
+
+.Admin {
+  font-family: "Sarabun", sans-serif;
+  font-size: 16px;
+}
+
+.Admin-icon {
   color: grey;
   margin-right: 5%;
   font-size: 25px;

@@ -4,6 +4,8 @@ import Login from '../views/Login.vue'
 import Layout from '../views/Layout.vue'
 import User from '../views/User.vue'
 import Test from '../views/Test.vue'
+import Admin from '../views/Admin.vue'
+import Remove from '../views/Remove.vue'
 import Dashboard from '../views/Dashboard.vue'
 
 Vue.use(VueRouter)
@@ -30,7 +32,9 @@ const router = new VueRouter({
             component: Layout,
             children: [
                 { path: '/User', name: 'User', component: User, meta: { requiresAuth: true } },
+                { path: '/Admin', name: 'Admin', component: Admin, meta: { requiresAuth: true } },
                 { path: '/Test', name: 'Test', component: Test, meta: { requiresAuth: true } },
+                { path: '/Remove', name: 'Remove', component: Remove, meta: { requiresAuth: true } },
                 { path: '/Dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true } },
             ]
         },

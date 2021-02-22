@@ -136,7 +136,7 @@
                                         label="สิทธิ์"
                                       ></v-select>
                                     </v-col>
-                                    <!-- </v-col> -->
+                                    <!-- </v-col>
                                     <v-col cols="12" sm="6" md="6">
                                       <v-text-field
                                         v-model="editedItem_admin.date"
@@ -150,7 +150,7 @@
                                         label="Update"
                                         readonly
                                       ></v-text-field>
-                                    </v-col>
+                                    </v-col> -->
                                   </v-row>
                                 </v-container>
                               </v-card-text>
@@ -189,16 +189,70 @@
                         </v-chip>
                       </template>
                       <template v-slot:item.actions="{ item }">
-                        <v-icon
+                        <!--<v-icon
                           medium
                           class="mr-2"
                           @click="editItem_admin(item)"
                           >mdi-account-edit</v-icon
                         >
-                        <!-- <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                         <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                        <v-menu left>
+                          <template v-slot:activator="{ on , attrs}">
+                            <v-btn
+                              black
+                              icon
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list v-show="hidden">
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editItem_admin(item)" >
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  เปลี่ยนสิทธิ์ User
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="Wait_delete_admin(item)">
+                                  <v-icon 
+                                    medium
+                                    class="mr-2" 
+                                  >mdi-delete</v-icon>
+                                  ลบ User
+                                </v-btn>
+                              </v-list-item-title>
+                          </v-list>
+                        </v-menu>
                       </template>
                     </v-data-table>
                   </v-card>
+                  <v-dialog v-model="dialog_W_delete_A" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
+                      </v-card-title>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_admin"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="delete_admin"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-tab-item>
                 <v-tab-item>
                   <!-- /////////////////////////////////////////////////////////// -->
@@ -297,7 +351,7 @@
                                         label="สิทธิ์"
                                       ></v-select>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="6">
+                                    <!-- <v-col cols="12" sm="6" md="6">
                                       <v-text-field
                                         v-model="editedItem_host.date"
                                         label="date"
@@ -310,7 +364,7 @@
                                         label="Update"
                                         readonly
                                       ></v-text-field>
-                                    </v-col>
+                                    </v-col>-->
                                   </v-row>
                                 </v-container>
                               </v-card-text>
@@ -349,13 +403,67 @@
                         </v-chip>
                       </template>
                       <template v-slot:item.actions="{ item }">
-                        <v-icon medium class="mr-2" @click="editItem_host(item)"
+                        <!-- <v-icon medium class="mr-2" @click="editItem_host(item)"
                           >mdi-account-edit</v-icon
                         >
-                        <!-- <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                        <v-menu left>
+                          <template v-slot:activator="{ on , attrs}">
+                            <v-btn
+                              black
+                              icon
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list v-show="hidden">
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editItem_host(item)">
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  เปลี่ยนสิทธิ์ User
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="Wait_delete_host(item)">
+                                  <v-icon 
+                                    medium
+                                    class="mr-2" 
+                                  >mdi-delete</v-icon>
+                                  ลบ User
+                                </v-btn>
+                              </v-list-item-title>
+                          </v-list>
+                        </v-menu>
                       </template>
                     </v-data-table>
                   </v-card>
+                  <v-dialog v-model="dialog_W_delete_H" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
+                      </v-card-title>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_host"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="delete_host"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-tab-item>
                 <v-tab-item>
                   <!-- /////////////////////////////////////////////////////////// -->
@@ -456,7 +564,7 @@
                                         label="สิทธิ์"
                                       ></v-select>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="6">
+                                    <!-- <v-col cols="12" sm="6" md="6">
                                       <v-text-field
                                         v-model="editedItem_citizen.date"
                                         label="date"
@@ -470,7 +578,7 @@
                                         readonly
                                       ></v-text-field>
                                     </v-col>
-                                    <!-- </v-col> -->
+                                    </v-col> -->
                                   </v-row>
                                 </v-container>
                               </v-card-text>
@@ -509,16 +617,70 @@
                         </v-chip>
                       </template>
                       <template v-slot:item.actions="{ item }">
-                        <v-icon
+                        <!-- <v-icon
                           medium
                           class="mr-2"
                           @click="editItem_citizen(item)"
                           >mdi-account-edit</v-icon
                         >
-                        <!-- <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                        <v-menu left>
+                          <template v-slot:activator="{ on , attrs}">
+                            <v-btn
+                              black
+                              icon
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list v-show="hidden">
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editItem_citizen(item)">
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  เปลี่ยนสิทธิ์ User
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="Wait_delete_citizen(item)">
+                                  <v-icon 
+                                    medium
+                                    class="mr-2" 
+                                  >mdi-delete</v-icon>
+                                  ลบ User
+                                </v-btn>
+                              </v-list-item-title>
+                          </v-list>
+                        </v-menu>
                       </template>
                     </v-data-table>
                   </v-card>
+                  <v-dialog v-model="dialog_W_delete_C" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
+                      </v-card-title>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_citizen"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="delete_citizen"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-tab-item>
                 <v-tab-item>
                   <!-- /////////////////////////////////////////////////////////// -->
@@ -619,7 +781,7 @@
                                         label="สิทธิ์"
                                       ></v-select>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="6">
+                                    <!-- <v-col cols="12" sm="6" md="6">
                                       <v-text-field
                                         v-model="editedItem_users.date"
                                         label="date"
@@ -633,7 +795,7 @@
                                         readonly
                                       ></v-text-field>
                                     </v-col>
-                                    <!-- </v-col> -->
+                                    </v-col> -->
                                   </v-row>
                                 </v-container>
                               </v-card-text>
@@ -672,16 +834,70 @@
                         </v-chip>
                       </template>
                       <template v-slot:item.actions="{ item }">
-                        <v-icon
+                        <!-- <v-icon
                           medium
                           class="mr-2"
                           @click="editItem_users(item)"
                           >mdi-account-edit</v-icon
                         >
-                        <!-- <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
+                        <v-menu left>
+                          <template v-slot:activator="{ on , attrs}">
+                            <v-btn
+                              black
+                              icon
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list v-show="hidden">
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editItem_users(item)">
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  เปลี่ยนสิทธิ์ User
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="Wait_delete_users(item)">
+                                  <v-icon 
+                                    medium
+                                    class="mr-2" 
+                                  >mdi-delete</v-icon>
+                                  ลบ User
+                                </v-btn>
+                              </v-list-item-title>
+                          </v-list>
+                        </v-menu>
                       </template>
                     </v-data-table>
                   </v-card>
+                  <v-dialog v-model="dialog_W_delete_U" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
+                      </v-card-title>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_users"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="delete_users"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-tab-item>
               </v-tabs>
               <v-divider></v-divider>
@@ -697,6 +913,7 @@
 export default {
   data: () => ({
     items: ["host", "user", "citizen"],
+    hidden: true,
     limit: "",
     search: "",
     alert: false,
@@ -704,6 +921,12 @@ export default {
     dialog_host: false,
     dialog_users: false,
     dialog_citizen: false,
+    dialog_W_delete_A: false,
+    dialog_W_delete_H: false,
+    dialog_W_delete_C: false,
+    dialog_W_delete_U: false,
+    data_delete: [],
+    data_delete_user: "",
     headers: [
       // { text: "ลำดับ", align: "start" , sortable: false , value: "number" },
       { text: "ชื่อผู้ใช้", value: "user" },
@@ -716,7 +939,7 @@ export default {
       { text: 'Update', value: 'update' },
       { text: "สิทธิ์", value: "status" },
       { text: 'Status', value: 'online' },
-      { text: "Option", value: "actions", sortable: false },
+      { text: "Option", value: "actions", sortable: false},
     ],
     all_data: [],
     admin: [],
@@ -732,6 +955,7 @@ export default {
     online_citizen: 0,
     online_user: 0,
     editedIndex_admin: -1,
+    editedIndex_host: -1,
     editedIndex_users: -1,
     editedIndex_citizen: -1,
     editedItem_admin: {
@@ -793,6 +1017,11 @@ export default {
   mounted() {
     var data_admin = this.$session.get("data");
     this.limit = data_admin["No_limit"]
+    if (this.limit == true) {
+      this.hidden = true
+    }else{
+      this.hidden = false
+    }
   },
   computed: {
     formTitle_admin() {
@@ -917,14 +1146,17 @@ export default {
       var date_now_2 = date_now_1.toISOString();
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/users/data"
+        // "https://meet.one.th/secret/api/users/data"
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data"
+        // "https://meet.one.th/secret/api/roles/data"
       );
       var roles = API_Roles.data.data;
       var API_ssr = await this.axios.get(
         process.env.VUE_APP_API + "/api/rooms/data"
+        // "https://meet.one.th/secret/api/rooms/data"
       );
       var ssr = API_ssr.data.data;
       for (let i = 0; i < data.length; i++) {
@@ -1060,10 +1292,12 @@ export default {
     async update(data) {
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/users/data"
+        // "https://meet.one.th/secret/api/users/data"
       );
       var data_api = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data"
+        // "https://meet.one.th/secret/api/roles/data"
       );
       var roles = API_Roles.data.data;
       for (let i = 0; i < this.all_data.length; i++) {
@@ -1085,6 +1319,19 @@ export default {
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/updatestatus",
         data_target
+      );
+      this.admin = [];
+      this.host = [];
+      this.users = [];
+      this.citizen = [];
+      this.alldata();
+    },
+    async delete(data) {
+      await this.axios.post(
+        process.env.VUE_APP_API + "/api/remove/save",{
+          username: data.user,
+          email: data.mail,
+        }
       );
       this.admin = [];
       this.host = [];
@@ -1132,45 +1379,38 @@ export default {
         this.alert = true;
       }
     },
-
-    // deleteItem(item) {
-    //   const index = this.admin.indexOf(item);
-    //   confirm("Are you sure you want to delete this item?") &&
-    //     this.admin.splice(index, 1);
-    // },
-
     close_admin() {
       this.dialog_admin = false;
+      this.dialog_W_delete_A = false;
       this.$nextTick(() => {
         this.editedItem_admin = Object.assign({}, this.defaultItem);
         this.editedIndex_admin = -1;
       });
     },
-
     close_host() {
       this.dialog_host = false;
+      this.dialog_W_delete_H = false;
       this.$nextTick(() => {
         this.editedItem_host = Object.assign({}, this.defaultItem);
         this.editedIndex_host = -1;
       });
     },
-
     close_users() {
       this.dialog_users = false;
+      this.dialog_W_delete_U = false;
       this.$nextTick(() => {
         this.editedItem_users = Object.assign({}, this.defaultItem);
         this.editedIndex_users = -1;
       });
     },
-
     close_citizen() {
       this.dialog_citizen = false;
+      this.dialog_W_delete_C = false;
       this.$nextTick(() => {
         this.editedItem_citizen = Object.assign({}, this.defaultItem);
         this.editedIndex_citizen = -1;
       });
     },
-
     save_admin() {
       if (this.editedIndex_admin > -1) {
         Object.assign(
@@ -1183,7 +1423,6 @@ export default {
       }
       this.close_admin();
     },
-
     save_host() {
       if (this.editedIndex_host > -1) {
         Object.assign(this.host[this.editedIndex_host], this.editedItem_host);
@@ -1193,7 +1432,6 @@ export default {
       }
       this.close_host();
     },
-
     save_users() {
       if (this.editedIndex_users > -1) {
         Object.assign(
@@ -1206,7 +1444,6 @@ export default {
       }
       this.close_users();
     },
-
     save_citizen() {
       if (this.editedIndex_citizen > -1) {
         Object.assign(
@@ -1221,6 +1458,46 @@ export default {
     },
     clear() {
       this.search = "";
+    },
+    Wait_delete_admin(item) {
+      this.editedIndex_admin = this.admin.indexOf(item);
+      this.editedItem_admin = Object.assign({}, item);
+      this.dialog_W_delete_A = true;
+    },
+    Wait_delete_host(item) {
+      this.editedIndex_host = this.host.indexOf(item);
+      this.editedItem_host = Object.assign({}, item);
+      this.dialog_W_delete_H = true;
+    },
+    Wait_delete_citizen(item) {
+      this.editedIndex_citizen = this.citizen.indexOf(item);
+      this.editedItem_citizen = Object.assign({}, item);
+      this.dialog_W_delete_C = true;
+    },
+    Wait_delete_users(item) {
+      this.editedIndex_users = this.users.indexOf(item);
+      this.editedItem_users = Object.assign({}, item);
+      this.dialog_W_delete_U = true;
+    },
+    delete_admin(){
+      Object.assign(this.admin[this.editedIndex_admin], this.editedItem_admin);
+      this.delete(this.admin[this.editedIndex_admin]);
+      this.close_admin();
+    },
+    delete_host(){
+      Object.assign(this.host[this.editedIndex_host], this.editedItem_host);
+      this.delete(this.host[this.editedIndex_host]);
+      this.close_host();
+    },
+    delete_citizen(){
+      Object.assign(this.citizen[this.editedIndex_citizen], this.editedItem_citizen);
+      this.delete(this.citizen[this.editedIndex_citizen]);
+      this.close_citizen();
+    },
+    delete_users(){
+      Object.assign(this.users[this.editedIndex_users], this.editedItem_users);
+      this.delete(this.users[this.editedIndex_users]);
+      this.close_users();
     },
   },
 };

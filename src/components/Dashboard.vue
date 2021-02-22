@@ -369,6 +369,7 @@ export default {
       );
       var data = history_rooms.data.data
       for (let i = 0; i < data.length; i++) {
+        console.log(data[i])
         for (let j = 0; j < data[i]["member"].length; j++) {
           if(data[i]["member"][j]["email"] != undefined){
             attendee_All.push({
