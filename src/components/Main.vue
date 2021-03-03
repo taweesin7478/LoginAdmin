@@ -156,12 +156,12 @@ export default {
         path: "/Dashboard",
         show: true,
       },
-      // {
-      //   icon: "mdi-radioactive",
-      //   title: "ทดสอบ",
-      //   path: "/Test",
-      //   show: true,
-      // },
+      {
+        icon: "mdi-radioactive",
+        title: "ทดสอบ",
+        path: "/Test",
+        show: true,
+      },
     ],
   }),
   mounted() {

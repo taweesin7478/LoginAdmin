@@ -70,7 +70,7 @@
                                     ยกเลิกการลบ
                                   </v-btn>
                                 </v-list-item-title>
-                                <v-list-item-title>
+                                <!--<v-list-item-title>
                                   <v-btn width="100%" height="40" @click="Wait_delete(item)">
                                     <v-icon 
                                       medium
@@ -78,7 +78,7 @@
                                     >mdi-delete</v-icon>
                                     ลบ User
                                   </v-btn>
-                                </v-list-item-title>
+                                </v-list-item-title>-->
                             </v-list>
                           </v-menu>
                       </template>
@@ -189,7 +189,7 @@ export default {
       var data_ALL = [];
       var role;
       var API_Data = await this.axios.get(
-          process.env.VUE_APP_API + "/api/remove/data"
+          process.env.VUE_APP_API + "/api/users/data"
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
@@ -197,30 +197,29 @@ export default {
       );
       var roles = API_Roles.data.data;
       for (let i = 0; i < data.length; i++) {
-        for (let j = 0; j < roles.length; j++) {
-            if (data[i]["role"] == roles[j]["_id"]) {
-            role = roles[j]["name"];
-            }
+        if(data[i]["disable"] == true) {
+          for (let j = 0; j < roles.length; j++) {
+              if (data[i]["role"] == roles[j]["_id"]) {
+              role = roles[j]["name"];
+              }
+          }
+          data_ALL = [
+              {
+                  user: data[i]["username"],
+                  fname: data[i]["name"],
+                  lname: data[i]["lastname"],
+                  company: data[i]["company"],
+                  email: data[i]["email"],
+                  status: role,
+              },
+          ];
+          this.Delete.push(data_ALL[0]);
         }
-        data_ALL = [
-            {
-                // number: N_admin,
-                user: data[i]["username"],
-                fname: data[i]["name"],
-                lname: data[i]["lastname"],
-                company: data[i]["company"],
-                email: data[i]["email"],
-                status: role,
-            },
-        ];
-        this.Delete.push(data_ALL[0]);
       }
     },
     async delete(data) {
-      console.log("delete")
-      console.log(data)
       await this.axios.post(
-        process.env.VUE_APP_API + "/api/remove/delete",{
+        process.env.VUE_APP_API + "/api/users/delete",{
           username: data.user,
           email: data.email,
         }
@@ -229,10 +228,12 @@ export default {
       this.alldata();
     },
     async restore(data) {
-      await this.axios.post(
-        process.env.VUE_APP_API + "/api/remove/restore",{
+      console.log(data)
+      await this.axios.put(
+        process.env.VUE_APP_API + "/api/users/disable",{
           username: data.user,
           email: data.email,
+          disable: false,
         }
       );
       this.Delete = [];

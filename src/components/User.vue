@@ -1173,111 +1173,113 @@ export default {
             on_status = "OFF";
           }
         }
-        if (role == "admin") {
-          data_ALL = [
-            {
-              // number: N_admin,
-              user: data[i]["username"],
-              fname: data[i]["name"],
-              lname: data[i]["lastname"],
-              company: data[i]["company"],
-              phone: data[i]["phonenumber"],
-              date: data[i]["created_at"],
-              update: data[i]["updated_at"],
-              mail: data[i]["email"],
-              online: on_status,
-              status: role,
-            },
-          ];
-        } if (role == "host") {
-          data_ALL = [
-            {
-              // number: N_host,
-              user: data[i]["username"],
-              fname: data[i]["name"],
-              lname: data[i]["lastname"],
-              company: data[i]["company"],
-              phone: data[i]["phonenumber"],
-              date: data[i]["created_at"],
-              update: data[i]["updated_at"],
-              mail: data[i]["email"],
-              online: on_status,
-              status: role,
-            },
-          ];
-          N_host = N_host + 1;
-          N_total = N_total + 1;
-          if(on_status == "ON"){
-            host_online = host_online + 1;
-            online_total = online_total + 1;
+        if(data[i]["disable"] == false) {
+          if (role == "admin") {
+            data_ALL = [
+              {
+                // number: N_admin,
+                user: data[i]["username"],
+                fname: data[i]["name"],
+                lname: data[i]["lastname"],
+                company: data[i]["company"],
+                phone: data[i]["phonenumber"],
+                date: data[i]["created_at"],
+                update: data[i]["updated_at"],
+                mail: data[i]["email"],
+                online: on_status,
+                status: role,
+              },
+            ];
+          } if (role == "host") {
+            data_ALL = [
+              {
+                // number: N_host,
+                user: data[i]["username"],
+                fname: data[i]["name"],
+                lname: data[i]["lastname"],
+                company: data[i]["company"],
+                phone: data[i]["phonenumber"],
+                date: data[i]["created_at"],
+                update: data[i]["updated_at"],
+                mail: data[i]["email"],
+                online: on_status,
+                status: role,
+              },
+            ];
+            N_host = N_host + 1;
+            N_total = N_total + 1;
+            if(on_status == "ON"){
+              host_online = host_online + 1;
+              online_total = online_total + 1;
+            }
+          } if (role == "user") {
+            data_ALL = [
+              {
+                // number: N_user,
+                user: data[i]["username"],
+                fname: data[i]["name"],
+                lname: data[i]["lastname"],
+                company: data[i]["company"],
+                phone: data[i]["phonenumber"],
+                date: data[i]["created_at"],
+                update: data[i]["updated_at"],
+                mail: data[i]["email"],
+                online: on_status,
+                status: role,
+              },
+            ];
+            N_user = N_user + 1;
+            N_total = N_total + 1;
+            if(on_status == "ON"){
+              user_online = user_online + 1;
+              online_total = online_total + 1;
+            }
+          } if (role == "citizen") {
+            data_ALL = [
+              {
+                // number: N_citizen,
+                user: data[i]["username"],
+                fname: data[i]["name"],
+                lname: data[i]["lastname"],
+                company: data[i]["company"],
+                phone: data[i]["phonenumber"],
+                date: data[i]["created_at"],
+                update: data[i]["updated_at"],
+                mail: data[i]["email"],
+                online: on_status,
+                status: role,
+              },
+            ];
+            N_citizen = N_citizen + 1;
+            N_total = N_total + 1;
+            if(on_status == "ON"){
+              citizen_online = citizen_online + 1;
+              online_total = online_total + 1;
+            }
           }
-        } if (role == "user") {
-          data_ALL = [
+          data_Update = [
             {
-              // number: N_user,
+              id: data[i]["_id"],
               user: data[i]["username"],
               fname: data[i]["name"],
               lname: data[i]["lastname"],
               company: data[i]["company"],
               phone: data[i]["phonenumber"],
-              date: data[i]["created_at"],
-              update: data[i]["updated_at"],
+              date: data[i]["created_at"].split("T","1"),
+              update: date_now_2,
               mail: data[i]["email"],
-              online: on_status,
               status: role,
             },
           ];
-          N_user = N_user + 1;
-          N_total = N_total + 1;
-          if(on_status == "ON"){
-            user_online = user_online + 1;
-            online_total = online_total + 1;
+          this.all_data.push(data_Update[0]);
+          this.admin.push(data_ALL[0]);
+          if (role == "host") {
+            this.host.push(data_ALL[0]);
+          } else if (role == "user") {
+            this.users.push(data_ALL[0]);
+          } else if (role == "citizen") {
+            this.citizen.push(data_ALL[0]);
           }
-        } if (role == "citizen") {
-          data_ALL = [
-            {
-              // number: N_citizen,
-              user: data[i]["username"],
-              fname: data[i]["name"],
-              lname: data[i]["lastname"],
-              company: data[i]["company"],
-              phone: data[i]["phonenumber"],
-              date: data[i]["created_at"],
-              update: data[i]["updated_at"],
-              mail: data[i]["email"],
-              online: on_status,
-              status: role,
-            },
-          ];
-          N_citizen = N_citizen + 1;
-          N_total = N_total + 1;
-          if(on_status == "ON"){
-            citizen_online = citizen_online + 1;
-            online_total = online_total + 1;
-          }
-        } 
-        data_Update = [
-          {
-            id: data[i]["_id"],
-            user: data[i]["username"],
-            fname: data[i]["name"],
-            lname: data[i]["lastname"],
-            company: data[i]["company"],
-            phone: data[i]["phonenumber"],
-            date: data[i]["created_at"].split("T","1"),
-            update: date_now_2,
-            mail: data[i]["email"],
-            status: role,
-          },
-        ];
-        this.all_data.push(data_Update[0]);
-        this.admin.push(data_ALL[0]);
-        if (role == "host") {
-          this.host.push(data_ALL[0]);
-        } else if (role == "user") {
-          this.users.push(data_ALL[0]);
-        } else if (role == "citizen") {
-          this.citizen.push(data_ALL[0]);
         }
       }
       this.total_all = N_total
@@ -1327,10 +1329,11 @@ export default {
       this.alldata();
     },
     async delete(data) {
-      await this.axios.post(
-        process.env.VUE_APP_API + "/api/remove/save",{
+      await this.axios.put(
+        process.env.VUE_APP_API + "/api/users/disable",{
           username: data.user,
           email: data.mail,
+          disable: true,
         }
       );
       this.admin = [];

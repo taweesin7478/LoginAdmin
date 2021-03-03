@@ -106,6 +106,9 @@
                     <template v-slot:item.date="{ item }">
                       {{ new Date(item.date).toLocaleDateString('fr') }}
                     </template>
+                    <template v-slot:item.limit="{ item }">
+                      {{ item.limit }}
+                    </template>
                     </v-data-table>
                   </v-card>
                   <v-dialog v-model="dialog_edit_T" max-width="500px">
