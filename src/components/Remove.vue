@@ -70,7 +70,7 @@
                                     ยกเลิกการลบ
                                   </v-btn>
                                 </v-list-item-title>
-                                <!--<v-list-item-title>
+                                <v-list-item-title>
                                   <v-btn width="100%" height="40" @click="Wait_delete(item)">
                                     <v-icon 
                                       medium
@@ -78,7 +78,7 @@
                                     >mdi-delete</v-icon>
                                     ลบ User
                                   </v-btn>
-                                </v-list-item-title>-->
+                                </v-list-item-title>
                             </v-list>
                           </v-menu>
                       </template>
