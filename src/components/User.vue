@@ -1146,21 +1146,21 @@ export default {
       var date_now_2 = date_now_1.toISOString();
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/users/data",{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
         // "https://meet.one.th/secret/api/users/data"
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data",{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
         // "https://meet.one.th/secret/api/roles/data"
       );
       var roles = API_Roles.data.data;
       var API_ssr = await this.axios.get(
         process.env.VUE_APP_API + "/api/rooms/data",{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
         // "https://meet.one.th/secret/api/rooms/data"
       );
@@ -1300,14 +1300,14 @@ export default {
     async update(data) {
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/users/data",{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
         // "https://meet.one.th/secret/api/users/data"
       );
       var data_api = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data",{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
         // "https://meet.one.th/secret/api/roles/data"
       );
@@ -1331,7 +1331,7 @@ export default {
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/updatestatus",
         data_target,{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       this.admin = [];
@@ -1347,7 +1347,7 @@ export default {
           email: data.mail,
           disable: true,
         },{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       this.admin = [];

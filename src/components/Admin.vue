@@ -361,11 +361,10 @@ export default {
       var data_ALL = [];
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/admin/data",{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       var data = API_Data.data.data;
-      console.log(data)
       for (let i = 0; i < data.length; i++) {
         if (data[i]["No_limit"] == true) {
           data_ALL = [
@@ -400,7 +399,7 @@ export default {
     async update(update){
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/admin/data",{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       var data = API_Data.data.data;
@@ -413,7 +412,7 @@ export default {
       await this.axios.put(
         process.env.VUE_APP_API + "/api/admin/update",
         data_target,{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       this.total = [],
@@ -427,7 +426,7 @@ export default {
           user: data.user,
           password: data.pass,          
         },{
-          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       this.total = [],
@@ -463,7 +462,6 @@ export default {
       });
     },
     close_admin_M() {
-      console.log("close")
       this.dialog_edit_M = false;
       this.$nextTick(() => {
         this.edited_admin_M = Object.assign({}, this.defaultItem);
@@ -488,15 +486,12 @@ export default {
       this.close_admin_T();
     },
     save_admin_M() {
-      console.log("1")
       Object.assign(
         this.modify[this.editedIndex_M],
         this.edited_admin_M
       );
-      console.log("2")
       this.update(this.modify[this.editedIndex_M]);
       this.close_admin_M();
-      console.log("3")
     },
     save_admin_V() {
       Object.assign(

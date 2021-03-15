@@ -232,7 +232,7 @@ export default {
         }
         this.items_page = data.data;
       } catch (error) {
-        console.log(error.message);
+        (error.message);
       }
       this.getPage();
     },
@@ -248,7 +248,7 @@ export default {
           this.star1 = 0;
         }
       } catch (error) {
-        console.log(error.message);
+        (error.message);
       }
     },
     async twostar() {
@@ -264,7 +264,7 @@ export default {
           this.star2 = 0;
         }
       } catch (error) {
-        console.log(error.message);
+        (error.message);
       }
     },
     async threestar() {
@@ -279,7 +279,7 @@ export default {
           this.star3 = 0;
         }
       } catch (error) {
-        console.log(error.message);
+        (error.message);
       }
     },
     async fourstar() {
@@ -294,7 +294,7 @@ export default {
           this.star4 = 0;
         }
       } catch (error) {
-        console.log(error.message);
+        (error.message);
       }
     },
     async fivestar() {
@@ -310,7 +310,7 @@ export default {
         }
         this.total();
       } catch (error) {
-        console.log(error.message);
+        (error.message);
       }
     },
     getRating() {
@@ -329,7 +329,7 @@ export default {
 
         this.comment = data.data;
       } catch (error) {
-        console.log(error.message);
+        (error.message);
       }
     },
     total() {

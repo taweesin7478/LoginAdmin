@@ -193,7 +193,7 @@ export default {
           user: username,
           password: password,
         },{
-          headers: { 'Authorization': `token ${process.env.ADMIN_TOKEN}` }
+          headers: { 'Authorization': `token ${process.env.VUE_APP_TOKEN}` }
         })
         .then((response) => {
           var status = response.data.status;
@@ -205,7 +205,6 @@ export default {
           }
           ///////////////////////////////////////////////////////////////////////
           else if (status == "Fail") {
-            console.log("START ERROR");
             this.notReady = false;
             this.loading = false;
             this.alertType = "error";
