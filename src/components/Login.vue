@@ -192,6 +192,8 @@ export default {
         .post(process.env.VUE_APP_API + "/api/admin/login", {
           user: username,
           password: password,
+        },{
+          headers: { 'Authorization': `token ${process.env.ADMIN_TOKEN}` }
         })
         .then((response) => {
           var status = response.data.status;

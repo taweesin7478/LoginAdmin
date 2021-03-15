@@ -302,11 +302,15 @@ export default {
       var total_push = [];
       var data_CD = [];
       var API_Data = await this.axios.get(
-        process.env.VUE_APP_API + "/api/users/data"
+        process.env.VUE_APP_API + "/api/users/data",{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+        }
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
-        process.env.VUE_APP_API + "/api/roles/data"
+        process.env.VUE_APP_API + "/api/roles/data",{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+        }
       );
       var roles = API_Roles.data.data;
       for (let k = 0; k < data.length; k++) {
@@ -365,7 +369,9 @@ export default {
       var data_ALL = [];
       var attendee_All = [];
       var history_rooms = await this.axios.get(
-        process.env.VUE_APP_API + "/api/History_rooms/data"
+        process.env.VUE_APP_API + "/api/History_rooms/data",{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+        }
       );
       var data = history_rooms.data.data
       for (let i = 0; i < data.length; i++) {

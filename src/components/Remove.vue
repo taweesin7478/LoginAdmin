@@ -189,11 +189,15 @@ export default {
       var data_ALL = [];
       var role;
       var API_Data = await this.axios.get(
-          process.env.VUE_APP_API + "/api/users/data"
+          process.env.VUE_APP_API + "/api/users/data",{
+            headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          }
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
-          process.env.VUE_APP_API + "/api/roles/data"
+          process.env.VUE_APP_API + "/api/roles/data",{
+            headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+          }
       );
       var roles = API_Roles.data.data;
       for (let i = 0; i < data.length; i++) {
@@ -222,6 +226,8 @@ export default {
         process.env.VUE_APP_API + "/api/users/delete",{
           username: data.user,
           email: data.email,
+        },{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
         }
       );
       this.Delete = [];
@@ -234,6 +240,8 @@ export default {
           username: data.user,
           email: data.email,
           disable: false,
+        },{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
         }
       );
       this.Delete = [];

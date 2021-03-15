@@ -360,7 +360,9 @@ export default {
     async alldata() {
       var data_ALL = [];
       var API_Data = await this.axios.get(
-        process.env.VUE_APP_API + "/api/admin/data"
+        process.env.VUE_APP_API + "/api/admin/data",{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+        }
       );
       var data = API_Data.data.data;
       console.log(data)
@@ -397,7 +399,9 @@ export default {
     },
     async update(update){
       var API_Data = await this.axios.get(
-        process.env.VUE_APP_API + "/api/admin/data"
+        process.env.VUE_APP_API + "/api/admin/data",{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+        }
       );
       var data = API_Data.data.data;
       for (let i = 0; i < data.length; i++) {
@@ -408,7 +412,9 @@ export default {
       data_target["No_limit"] = update["limit"]
       await this.axios.put(
         process.env.VUE_APP_API + "/api/admin/update",
-        data_target
+        data_target,{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
+        }
       );
       this.total = [],
       this.modify = [],
@@ -420,6 +426,8 @@ export default {
         process.env.VUE_APP_API + "/api/admin/create",{
           user: data.user,
           password: data.pass,          
+        },{
+          headers: { 'Authorization' : `token ${process.env.ADMIN_TOKEN}` }
         }
       );
       this.total = [],
