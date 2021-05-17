@@ -169,6 +169,27 @@
                             </v-card-title>
                           </v-card>
                           </v-dialog>
+                          <v-dialog v-model="Record" max-width="600px">
+                          <v-card>
+                            <v-card-title>
+                              <span class="headline">{{
+                                formTitle_users
+                              }}</span>
+                              <v-card-text>
+                                <v-container>
+                                  <v-row justify="center">
+                                    <v-col cols="12" sm="12" md="12">
+                                    <v-data-table
+                                      :headers="header_record"
+                                      :items="Recordfile"
+                                    ></v-data-table>
+                                    </v-col>
+                                  </v-row>
+                                </v-container>
+                              </v-card-text>
+                            </v-card-title>
+                          </v-card>
+                          </v-dialog>
                         </template>
                         <template v-slot:item.member="item">
                           <v-icon
@@ -177,6 +198,19 @@
                             @click="data_all_name(item)"
                             >mdi-clipboard-account</v-icon
                           >
+                        </template>
+                        <!--////////////////////////////////////////////////-->
+                        <template v-slot:item.file="item">
+                          <div v-if="item.item.file[0] === 'notRecord'">
+                            <v-icon>mdi-minus</v-icon>
+                          </div>
+                          <div v-else>
+                            <v-icon
+                              medium
+                              class="mr-2"
+                              @click="data_record_name(item)"
+                              >mdi-file-video</v-icon>
+                          </div>
                         </template>
                         </v-data-table>
                       </v-card>
@@ -203,6 +237,7 @@ export default {
     return {
       History: false,
       hidden: false,
+      Record: false,
       total_user: 0,
       total_meeting: 0,
       date: new Date().toISOString().substr(0, 10),
@@ -242,14 +277,20 @@ export default {
         { text: 'end time' , value: 'e_time'},
         { text: 'จำนวนผู้ร่วมประชุม' , value: 'attendee'},
         { text: "รายชื่อผู้ร่วมประชุม", value: "member", sortable: false },
+        { text: "record", value: "file", sortable: false },
       ],
       header_member: [
         { text: 'รายชื่อ' , align: 'start' , filterable: false , value: 'member_name'},
         { text: 'เวลาเข้าห้องประชุม', value: 'join_at' },
         { text: 'เวลาออกห้องประชุม', value: 'out_at' },
       ],
+      header_record: [
+        { text: 'ชื่อไฟล์' , align: 'start' , filterable: false , value: 'file_name'},
+        { text: 'ขนาดไฟล์', value: 'size' },
+      ],
       desserts: [],
       meeting: [],
+      Recordfile:[],
     };
   },
   watch: {
@@ -303,12 +344,14 @@ export default {
       var data_CD = [];
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/users/data",{
+        // "https://meet.one.th/secret/api/users/data",{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data",{
+        // "https://meet.one.th/secret/api/roles/data",{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
@@ -368,12 +411,21 @@ export default {
       var N_meet = 0;
       var data_ALL = [];
       var attendee_All = [];
+      var record_ALL = []
       var history_rooms = await this.axios.get(
         process.env.VUE_APP_API + "/api/History_rooms/data",{
+        // "https://meet.one.th/secret/api/History_rooms/data",{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
       var data = history_rooms.data.data
+      var record = await this.axios.get(
+        process.env.VUE_APP_API + "/api/onebox/record",{
+        // "https://meet.one.th/secret/api/History_rooms/data",{
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+        }
+      );
+      var file = record.data.recore
       for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < data[i]["member"].length; j++) {
           if(data[i]["member"][j]["email"] != undefined){
@@ -392,6 +444,16 @@ export default {
             })
           }
         }
+        for (let k = 0; k < file.length; k++) {
+          if(file[k].meetingid == data[i]["meeting_id"]){
+            record_ALL.push({
+              name : file[k]["filename"],
+              size : file[k]["size"]
+            })
+          }else{
+            record_ALL.push("notRecord")
+          }
+        }
         if (this.date_show == data[i]["date"]) {
           data_ALL = [
             {
@@ -402,6 +464,7 @@ export default {
               e_time: data[i]["end_time"],
               attendee: data[i]["attendee"],
               member: attendee_All,
+              file: record_ALL
             },
           ];
           N_meet = N_meet + 1;
@@ -416,12 +479,14 @@ export default {
               e_time: data[i]["end_time"],
               attendee: data[i]["attendee"],
               member: attendee_All,
+              file: record_ALL
             },
           ];
           N_meet = N_meet + 1;
           this.meeting.push(data_ALL[0]);
         }
         attendee_All = [];
+        record_ALL = [];
       }
       this.total_meeting = N_meet
     },
@@ -449,6 +514,30 @@ export default {
         this.desserts.push(member[0]);
       }
       this.History = true;
+    },
+    data_record_name (item) {
+      this.Recordfile = [];
+      var Recorddata = [];
+      if(item["item"]["file"][0] != "notRecord"){
+        for (let i = 0; i < item["item"]["file"].length; i++) {
+          Recorddata = [
+            {
+              file_name: item["item"]["file"][i]["name"],
+              size: item["item"]["file"][i]["size"]
+            },
+          ];
+        }
+        this.Recordfile.push(Recorddata[0]);
+      }else{
+        Recorddata = [
+          {
+            file_name: "NO File",
+            size: "-"
+          },
+        ];
+        this.Recordfile.push(Recorddata[0]);
+      }
+      this.Record = true;
     },
     select_data (value) {
       this.meeting = [];

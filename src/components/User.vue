@@ -1148,21 +1148,18 @@ export default {
         process.env.VUE_APP_API + "/api/users/data",{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
-        // "https://meet.one.th/secret/api/users/data"
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data",{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
-        // "https://meet.one.th/secret/api/roles/data"
       );
       var roles = API_Roles.data.data;
       var API_ssr = await this.axios.get(
         process.env.VUE_APP_API + "/api/rooms/data",{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
-        // "https://meet.one.th/secret/api/rooms/data"
       );
       var ssr = API_ssr.data.data;
       for (let i = 0; i < data.length; i++) {

@@ -1,61 +1,78 @@
 <template>
-  <div>
-    <v-row justify="space-around">
-      <v-switch v-model="icons" class="mx-2" label="Text + icons"></v-switch>
-      <v-switch v-model="centered" class="mx-2" label="Centered" :disabled="vertical"></v-switch>
-      <v-switch v-model="grow" class="mx-2" label="Grow"></v-switch>
-      <v-switch v-model="vertical" class="mx-2" label="Vertical"></v-switch>
-      <v-switch v-model="right" class="mx-2" label="Right"></v-switch>
-      <v-col cols="12">
-        <v-slider v-model="tabs" min="0" max="10" label="Tabs number"></v-slider>
-      </v-col>
-    </v-row>
-
-    <v-tabs
-      v-model="tab"
-      background-color="deep-purple accent-4"
-      class="elevation-2"
-      dark
-      :centered="centered"
-      :grow="grow"
-      :vertical="vertical"
-      :right="right"
-      :prev-icon="prevIcon ? 'mdi-arrow-left-bold-box-outline' : undefined"
-      :next-icon="nextIcon ? 'mdi-arrow-right-bold-box-outline' : undefined"
-      :icons-and-text="icons"
-    >
-      <v-tabs-slider></v-tabs-slider>
-
-      <v-tab v-for="i in tabs" :key="i" :href="`#tab-${i}`">
-        Tab {{ i }}
-        <v-icon v-if="icons">mdi-phone</v-icon>
-      </v-tab>
-
-      <v-tab-item v-for="i in tabs" :key="i" :value="'tab-' + i">
-        <v-card flat tile>
-          <v-card-text>{{ text }}</v-card-text>
-        </v-card>
-      </v-tab-item>
-    </v-tabs>
-  </div>
+  <v-card
+    color="red lighten-2"
+    dark
+  >
+    <v-card-title class="headline red lighten-3">
+      Search for Public APIs
+    </v-card-title>
+    <v-card-text>
+      Explore hundreds of free API's ready for consumption! For more information visit
+      <a
+        class="grey--text text--lighten-3"
+        href="https://github.com/toddmotto/public-apis"
+        target="_blank"
+      >the Github repository</a>.
+    </v-card-text>
+    <v-card-text>
+      <v-autocomplete
+        v-model="model"
+        :items="items"
+        :loading="isLoading"
+        :search-input.sync="search"
+        color="white"
+        hide-no-data
+        hide-selected
+        item-text="Description"
+        item-value="API"
+        label="Public APIs"
+        placeholder="Start typing to Search"
+        prepend-icon="mdi-database-search"
+        return-object
+      ></v-autocomplete>
+    </v-card-text>
+    <v-divider></v-divider>
+    <v-expand-transition>
+      <v-list
+        v-if="model"
+        class="red lighten-3"
+      >
+        <v-list-item
+          v-for="(field, i) in fields"
+          :key="i"
+        >
+          <v-list-item-content>
+            <v-list-item-title v-text="field.value"></v-list-item-title>
+            <v-list-item-subtitle v-text="field.key"></v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-expand-transition>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        :disabled="!model"
+        color="grey darken-3"
+        @click="model = null"
+      >
+        Clear
+        <v-icon right>
+          mdi-close-circle
+        </v-icon>
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      tab: null,
-      text:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      icons: false,
-      centered: false,
-      grow: false,
-      vertical: false,
-      prevIcon: false,
-      nextIcon: false,
-      right: false,
-      tabs: 3,
-    };
-  },
-};
+  export default {
+    data: () => ({
+      descriptionLimit: 60,
+      entries: [],
+      isLoading: false,
+      model: '1',
+      search: null,
+      items:[1,2,3,4]
+    }),
+  }
 </script>
