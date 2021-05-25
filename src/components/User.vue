@@ -936,7 +936,7 @@ export default {
       { text: "เบอร์โทรศัพท์", value: "phone" },
       { text: "E-mail", value: "mail" },
       { text: "วันที่สมัคร", value: "date" },
-      { text: 'Update', value: 'update' },
+      { text: 'Last Login', value: 'update' },
       { text: "สิทธิ์", value: "status" },
       { text: 'Status', value: 'online' },
       { text: "Option", value: "actions", sortable: false},
@@ -1169,7 +1169,7 @@ export default {
           }
         }
         for (let k = 0; k < ssr.length; k++) {
-          if (data[i]["oneid"] == ssr[k]["oneid"]) {
+          if (data[i]["username"] == ssr[k]["username"]) {
             on_status = "ON";
             break
           }else{

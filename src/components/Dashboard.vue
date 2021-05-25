@@ -73,7 +73,7 @@
                     <v-flex lg6 class="d-flex">
                       <v-card width="100%" height="320px" outlined>
                         <v-toolbar color="white" dense flat>
-                          <span style="font-size: 16px;">New User</span>
+                          <span style="font-size: 16px;">User</span>
                           <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-divider></v-divider>
