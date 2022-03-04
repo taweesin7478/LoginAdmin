@@ -359,9 +359,12 @@ export default {
   methods: {
     async alldata() {
       var data_ALL = [];
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/admin/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       var data = API_Data.data.data;
@@ -397,9 +400,12 @@ export default {
       }
     },
     async update(update){
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/admin/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       var data = API_Data.data.data;
@@ -412,7 +418,7 @@ export default {
       await this.axios.put(
         process.env.VUE_APP_API + "/api/admin/update",
         data_target,{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       this.total = [],
@@ -421,12 +427,15 @@ export default {
       this.alldata();
     },
     async create(data){
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       await this.axios.post(
         process.env.VUE_APP_API + "/api/admin/create",{
           user: data.user,
           password: data.pass,          
         },{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       this.total = [],

@@ -2,905 +2,245 @@
   <v-layout wrap>
     <v-flex xs12>
       <v-card height="100%" flat color="#f5f5f5">
-        <v-dialog v-model="alert" width="50%" height="100%">
-          <v-alert type="error" height="100%" >
-            รหัสนี้ไม่สามารถทำการแก้ไขได้
-          </v-alert>
-        </v-dialog>
         <v-container fluid grid-list-lg class="pa-0 pl-0 pr-0">
           <v-row justify="center">
-            <div class="loading-myform-block" v-if="notReady"></div>
-            <v-card
+              <div class="loading-myform-block" v-if="notReady"></div>
+              <v-card
               height="100%"
               width="95%"
               class="table-content pa-2 pl-2 pr-2"
-            >
-              <div class="lds-roller loading-circle" v-if="notReady">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-
-              <v-card-title class="table-name">
-                จัดการบัญชีผู้ใช้
-                <v-spacer></v-spacer>
-              </v-card-title>
-
-              <v-divider></v-divider>
-              <v-tabs :centered="true" :grow="true">
-                <v-tab ripple @click="clear()">TOTAL</v-tab>
-                <v-tab ripple @click="clear()">Business</v-tab>
-                <v-tab ripple @click="clear()">Citizen</v-tab>
-                <v-tab ripple @click="clear()">User</v-tab>
-                <v-tab-item>
-                  <!-- /////////////////////////////////////////////////////////// -->
-                  <v-card flat>
-                    <v-data-table
-                      :headers="headers"
-                      :items="admin"
-                      :search="search"
-                      :items-per-page="10"
-                      :sort-by="['date']"
-                      :sort-desc="[true]"
-                      multi-sort
-                      class="elevation-1"
+              >
+              <v-layout
+                class="ma-0" wrap
+              >
+                <!-- START -->
+                <v-flex lg12 xs12>
+                  <v-toolbar dense flat>
+                    <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                    <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                    <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                    <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                    <v-row
+                      align="center"
+                      justify="space-around"
                     >
-                      <template v-slot:top>
-                        <v-toolbar flat color="white">
+                      <!--<v-btn text elevation="4" medium small v-on:click="data_all('today')">
+                      TODAY
+                      </v-btn>-->
+                      <v-btn text elevation="4" medium small v-show="!rate" v-on:click="rate_on()">
+                      Rate OFF
+                      </v-btn>
+                      <v-btn text elevation="4" small color="primary" v-show="rate" v-on:click="rate_off()" @change="select_data(date)">
+                      Rate ON
+                      </v-btn>
+                      <div id="app" v-show="rate">
+                        <v-card width="100%" height="100%" outlined>
+                          <input type="date" v-model="rate_date_S" value="rate_date" @change="select_rate_S(rate_date_S)"/>
+                        </v-card>
+                      </div>
+                      <div id="app" v-show="rate">
+                        --
+                      </div>
+                      <div id="app" v-show="rate">
+                        <v-card width="100%" height="100%" outlined>
+                          <input type="date" v-model="rate_date_E" value="rate_date" @change="select_rate_E(rate_date_E)"/>
+                        </v-card>
+                      </div>
+                      <div id="app" v-show="!rate">
+                        <v-card width="100%" height="100%" outlined>
+                          <input type="date" v-model="date" value="date" outlined @change="select_data(date)"/>
+                        </v-card>
+                      </div>
+                      <v-btn text elevation="4" medium small v-show="!hidden" v-on:click="data_all('ALL')">
+                      ADD ALL
+                      </v-btn>
+                      <v-btn text elevation="4" small color="primary" v-show="hidden" v-on:click="select_data(date)" @change="select_data(date)">
+                      Close
+                      <v-icon>mdi-close-circle-outline</v-icon>
+                      </v-btn>
+                    </v-row>
+                  </v-toolbar>
+                </v-flex>
+                <v-flex lg6 xs12>
+                  <v-layout wrap>
+                    <v-flex lg12 class="d-flex">
+                      <v-card width="100%" height="320px" outlined>
+                        <v-toolbar color="white" dense flat>
+                          <span style="font-size: 16px;">ผู้ใช้งาน {{date_show}}</span>
                           <v-spacer></v-spacer>
-                          <v-card-title>
-                          จำนวนผู้ใช้ทั้งหมด {{total_all}} คน
-                          </v-card-title>
                           <v-spacer></v-spacer>
-                          <v-card-title>
-                          Online {{online_total}} คน 
-                          </v-card-title>
+                        </v-toolbar>
+                        <v-divider></v-divider>
+                        <v-list-item>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                            รวมผู้ใช้งานทั้งหมด {{total_user}} คน
+                              <apexcharts
+                                type="pie"
+                                width="100%"
+                                height="230"
+                                :options="chartOptions"
+                                :series="series"
+                              ></apexcharts>
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </v-card>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+                <v-flex lg6 xs12>
+                  <v-layout wrap>
+                    <v-flex lg6 class="d-flex">
+                      <v-card width="100%" height="320px" outlined>
+                        <v-toolbar color="white" dense flat>
+                          <span style="font-size: 16px;">User</span>
                           <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <v-divider></v-divider>
+                        <v-toolbar color="white" dense flat height="85px">
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">Business</span>
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">{{series[0]}}</span>
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">คน</span>
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <v-divider></v-divider>
+                        <v-toolbar color="white" dense flat height="85px">
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">Citizen</span>
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">{{series[1]}}</span>
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">คน</span>
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <v-divider></v-divider>
+                        <v-toolbar color="white" dense flat height="85px">
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">User</span>
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">{{series[2]}}</span>
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 20px;">คน</span>
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+                      </v-card>
+                    </v-flex>
+                    <v-flex lg6 class="d-flex">
+                      <v-card width="100%" height="320px" outlined>
+                        <v-toolbar color="white" dense flat>
+                          <span style="font-size: 16px;">Start Meeting</span>
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <v-divider></v-divider>
+                        <v-toolbar color="white" dense flat height="250px">
+                          <v-spacer></v-spacer>
+                          <span style="font-size: 40px;" class="">{{total_meeting}}</span>
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+                      </v-card>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+                <v-flex lg12 xs12>
+                  <v-layout wrap>
+                    <v-flex lg12 class="d-flex">
+                      <v-card width="100%" height="100%" outlined>
+                        <v-toolbar color="white" dense flat>
+                          <span style="font-size: 16px;">History</span>
+                          <v-spacer></v-spacer>
+                          <v-btn text elevation="4" small v-on:click="onExport()">Export</v-btn>
+                        </v-toolbar>
+                        <v-divider></v-divider>
+                        <v-card-title>
                           <v-text-field
                             v-model="search"
                             append-icon="mdi-magnify"
-                            label="ค้นหา"
+                            label="Search"
                             single-line
                             hide-details
-                            style="
-                              font-family: 'Sarabun', sans-serif !important;
-                            "
                           ></v-text-field>
-                          <v-dialog v-model="dialog_admin" max-width="500px">
-                            <v-card>
-                              <v-card-title>
-                                <span class="headline">{{
-                                  formTitle_admin
-                                }}</span>
-                              </v-card-title>
-
+                        </v-card-title>
+                        <v-data-table
+                          :headers="headers"
+                          :items="meeting"
+                          :search="search"
+                        >
+                        <template v-slot:top>
+                          <v-dialog v-model="History" max-width="600px">
+                          <v-card>
+                            <v-card-title>
+                              <span class="headline">{{
+                                formTitle_users
+                              }}</span>
                               <v-card-text>
                                 <v-container>
                                   <v-row justify="center">
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_admin.user"
-                                        label="ชื่อผู้ใช้"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_admin.fname"
-                                        label="ชื่อ"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_admin.lname"
-                                        label="นามสกุล"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_admin.company"
-                                        label="Company"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_admin.phone"
-                                        label="เบอร์โทรศัพท์"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_admin.mail"
-                                        label="E-mail"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <!-- <v-col cols="12" sm="6" md="4"> -->
-                                    <!-- <v-text-field
-                                        v-model="editedItem_admin.status"
-                                        label="สิทธิ์"
-                                    ></v-text-field>-->
                                     <v-col cols="12" sm="12" md="12">
-                                      <v-select
-                                        v-model="editedItem_admin.status"
-                                        :items="items"
-                                        label="สิทธิ์"
-                                      ></v-select>
+                                    <v-data-table
+                                      :headers="header_member"
+                                      :items="desserts"
+                                      :sort-by="['join_at']"
+                                    ></v-data-table>
                                     </v-col>
-                                    <!-- </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_admin.date"
-                                        label="date"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_admin.update"
-                                        label="Update"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col> -->
                                   </v-row>
                                 </v-container>
                               </v-card-text>
-
-                              <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="close_admin"
-                                  >ยกเลิก</v-btn
-                                >
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="save_admin"
-                                  >บันทึก</v-btn
-                                >
-                              </v-card-actions>
-                            </v-card>
+                            </v-card-title>
+                          </v-card>
                           </v-dialog>
-                        </v-toolbar>
-                      </template>
-                      <template v-slot:item.date="{ item }">
-                        {{ new Date(item.date).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.update="{ item }">
-                        {{ new Date(item.update).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.online="{ item }">
-                        <v-chip
-                          :color="getColor(item.online)"
-                          dark
-                        >
-                          {{ item.online }}
-                        </v-chip>
-                      </template>
-                      <template v-slot:item.actions="{ item }">
-                        <!--<v-icon
-                          medium
-                          class="mr-2"
-                          @click="editItem_admin(item)"
-                          >mdi-account-edit</v-icon
-                        >
-                         <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
-                        <v-menu left>
-                          <template v-slot:activator="{ on , attrs}">
-                            <v-btn
-                              black
-                              icon
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              <v-icon>mdi-dots-vertical</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list v-show="hidden">
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="editItem_admin(item)" >
-                                  <v-icon
-                                  medium
-                                  class="mr-2"
-                                  >mdi-account-edit</v-icon>
-                                  เปลี่ยนสิทธิ์ User
-                                </v-btn>
-                              </v-list-item-title>
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="Wait_delete_admin(item)">
-                                  <v-icon 
-                                    medium
-                                    class="mr-2" 
-                                  >mdi-delete</v-icon>
-                                  ลบ User
-                                </v-btn>
-                              </v-list-item-title>
-                          </v-list>
-                        </v-menu>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                  <v-dialog v-model="dialog_W_delete_A" max-width="500px">
-                    <v-card>
-                      <v-card-title>
-                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
-                      </v-card-title>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="close_admin"
-                          >ยกเลิก</v-btn
-                        >
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="delete_admin"
-                          >ตกลง</v-btn
-                        >
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-tab-item>
-                <v-tab-item>
-                  <!-- /////////////////////////////////////////////////////////// -->
-                  <v-card flat>
-                    <v-data-table
-                      :headers="headers"
-                      :items="host"
-                      :search="search"
-                      :items-per-page="10"
-                      :sort-by="['date']"
-                      :sort-desc="[true]"
-                      multi-sort
-                      class="elevation-1"
-                    >
-                      <template v-slot:top>
-                        <v-toolbar flat color="white">
-                          <v-spacer></v-spacer>
-                          <v-card-title>
-                          จำนวน BUSINESS ทั้งหมด {{total_bussiness}} คน
-                          </v-card-title>
-                          <v-spacer></v-spacer>
-                          <v-card-title>
-                          Online {{online_bussiness}} คน 
-                          </v-card-title>
-                          <v-spacer></v-spacer>
-                          <v-text-field
-                            v-model="search"
-                            append-icon="mdi-magnify"
-                            label="ค้นหา"
-                            single-line
-                            hide-details
-                            style="
-                              font-family: 'Sarabun', sans-serif !important;
-                            "
-                          ></v-text-field>
-                          <v-dialog v-model="dialog_host" max-width="500px">
-                            <v-card>
-                              <v-card-title>
-                                <span class="headline">{{
-                                  formTitle_host
-                                }}</span>
-                              </v-card-title>
-
+                          <v-dialog v-model="Record" max-width="600px">
+                          <v-card>
+                            <v-card-title>
+                              <span class="headline">{{
+                                formTitle_users
+                              }}</span>
                               <v-card-text>
                                 <v-container>
                                   <v-row justify="center">
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_host.user"
-                                        label="ชื่อผู้ใช้"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_host.fname"
-                                        label="ชื่อ"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_host.lname"
-                                        label="นามสกุล"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_host.company"
-                                        label="Company"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_host.phone"
-                                        label="เบอร์โทรศัพท์"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_host.mail"
-                                        label="E-mail"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <!-- <v-col cols="12" sm="6" md="4">
-                                      <v-text-field v-model="editedItem_host.status" label="สิทธิ์"></v-text-field>
-                                    </v-col>-->
                                     <v-col cols="12" sm="12" md="12">
-                                      <v-select
-                                        v-model="editedItem_host.status"
-                                        :items="items"
-                                        label="สิทธิ์"
-                                      ></v-select>
+                                    <v-data-table
+                                      :headers="header_record"
+                                      :items="Recordfile"
+                                    ></v-data-table>
                                     </v-col>
-                                    <!-- <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_host.date"
-                                        label="date"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_host.update"
-                                        label="Update"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>-->
                                   </v-row>
                                 </v-container>
                               </v-card-text>
-
-                              <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="close_host"
-                                  >ยกเลิก</v-btn
-                                >
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="save_host"
-                                  >บันทึก</v-btn
-                                >
-                              </v-card-actions>
-                            </v-card>
+                            </v-card-title>
+                          </v-card>
                           </v-dialog>
-                        </v-toolbar>
-                      </template>
-                      <template v-slot:item.date="{ item }">
-                        {{ new Date(item.date).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.update="{ item }">
-                        {{ new Date(item.update).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.online="{ item }">
-                        <v-chip
-                          :color="getColor(item.online)"
-                          dark
-                        >
-                          {{ item.online }}
-                        </v-chip>
-                      </template>
-                      <template v-slot:item.actions="{ item }">
-                        <!-- <v-icon medium class="mr-2" @click="editItem_host(item)"
-                          >mdi-account-edit</v-icon
-                        >
-                        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
-                        <v-menu left>
-                          <template v-slot:activator="{ on , attrs}">
-                            <v-btn
-                              black
-                              icon
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              <v-icon>mdi-dots-vertical</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list v-show="hidden">
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="editItem_host(item)">
-                                  <v-icon
-                                  medium
-                                  class="mr-2"
-                                  >mdi-account-edit</v-icon>
-                                  เปลี่ยนสิทธิ์ User
-                                </v-btn>
-                              </v-list-item-title>
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="Wait_delete_host(item)">
-                                  <v-icon 
-                                    medium
-                                    class="mr-2" 
-                                  >mdi-delete</v-icon>
-                                  ลบ User
-                                </v-btn>
-                              </v-list-item-title>
-                          </v-list>
-                        </v-menu>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                  <v-dialog v-model="dialog_W_delete_H" max-width="500px">
-                    <v-card>
-                      <v-card-title>
-                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
-                      </v-card-title>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="close_host"
-                          >ยกเลิก</v-btn
-                        >
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="delete_host"
-                          >ตกลง</v-btn
-                        >
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-tab-item>
-                <v-tab-item>
-                  <!-- /////////////////////////////////////////////////////////// -->
-                  <v-card flat>
-                    <v-data-table
-                      :headers="headers"
-                      :items="citizen"
-                      :search="search"
-                      :items-per-page="10"
-                      :sort-by="['date']"
-                      :sort-desc="[true]"
-                      multi-sort
-                      class="elevation-1"
-                    >
-                      <template v-slot:top>
-                        <v-toolbar flat color="white">
-                          <v-spacer></v-spacer>
-                          <v-card-title>
-                          จำนวน CITIZEN ทั้งหมด {{total_citizen}} คน
-                          </v-card-title>
-                          <v-spacer></v-spacer>
-                          <v-card-title>
-                          Online {{online_citizen}} คน 
-                          </v-card-title>
-                          <v-spacer></v-spacer>
-                          <v-text-field
-                            v-model="search"
-                            append-icon="mdi-magnify"
-                            label="ค้นหา"
-                            single-line
-                            hide-details
-                            style="
-                              font-family: 'Sarabun', sans-serif !important;
-                            "
-                          ></v-text-field>
-                          <v-dialog v-model="dialog_citizen" max-width="500px">
-                            <v-card>
-                              <v-card-title>
-                                <span class="headline">{{
-                                  formTitle_citizen
-                                }}</span>
-                              </v-card-title>
-
-                              <v-card-text>
-                                <v-container>
-                                  <v-row justify="center">
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.user"
-                                        label="ชื่อผู้ใช้"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.fname"
-                                        label="ชื่อ"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.lname"
-                                        label="นามสกุล"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.company"
-                                        label="Company"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.phone"
-                                        label="เบอร์โทรศัพท์"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.mail"
-                                        label="E-mail"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <!-- <v-col cols="12" sm="6" md="4"> -->
-                                    <!-- <v-text-field
-                                        v-model="editedItem_citizen.status"
-                                        label="สิทธิ์"
-                                    ></v-text-field>-->
-                                    <v-col cols="12" sm="12" md="12">
-                                      <v-select
-                                        v-model="editedItem_citizen.status"
-                                        :items="items"
-                                        label="สิทธิ์"
-                                      ></v-select>
-                                    </v-col>
-                                    <!-- <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.date"
-                                        label="date"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_citizen.update"
-                                        label="Update"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    </v-col> -->
-                                  </v-row>
-                                </v-container>
-                              </v-card-text>
-
-                              <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="close_citizen"
-                                  >ยกเลิก</v-btn
-                                >
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="save_citizen"
-                                  >บันทึก</v-btn
-                                >
-                              </v-card-actions>
-                            </v-card>
-                          </v-dialog>
-                        </v-toolbar>
-                      </template>
-                      <template v-slot:item.date="{ item }">
-                        {{ new Date(item.date).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.update="{ item }">
-                        {{ new Date(item.update).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.online="{ item }">
-                        <v-chip
-                          :color="getColor(item.online)"
-                          dark
-                        >
-                          {{ item.online }}
-                        </v-chip>
-                      </template>
-                      <template v-slot:item.actions="{ item }">
-                        <!-- <v-icon
-                          medium
-                          class="mr-2"
-                          @click="editItem_citizen(item)"
-                          >mdi-account-edit</v-icon
-                        >
-                        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
-                        <v-menu left>
-                          <template v-slot:activator="{ on , attrs}">
-                            <v-btn
-                              black
-                              icon
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              <v-icon>mdi-dots-vertical</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list v-show="hidden">
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="editItem_citizen(item)">
-                                  <v-icon
-                                  medium
-                                  class="mr-2"
-                                  >mdi-account-edit</v-icon>
-                                  เปลี่ยนสิทธิ์ User
-                                </v-btn>
-                              </v-list-item-title>
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="Wait_delete_citizen(item)">
-                                  <v-icon 
-                                    medium
-                                    class="mr-2" 
-                                  >mdi-delete</v-icon>
-                                  ลบ User
-                                </v-btn>
-                              </v-list-item-title>
-                          </v-list>
-                        </v-menu>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                  <v-dialog v-model="dialog_W_delete_C" max-width="500px">
-                    <v-card>
-                      <v-card-title>
-                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
-                      </v-card-title>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="close_citizen"
-                          >ยกเลิก</v-btn
-                        >
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="delete_citizen"
-                          >ตกลง</v-btn
-                        >
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-tab-item>
-                <v-tab-item>
-                  <!-- /////////////////////////////////////////////////////////// -->
-                  <v-card flat>
-                    <v-data-table
-                      :headers="headers"
-                      :items="users"
-                      :search="search"
-                      :items-per-page="10"
-                      :sort-by="['date']"
-                      :sort-desc="[true]"
-                      multi-sort
-                      class="elevation-1"
-                    >
-                      <template v-slot:top>
-                        <v-toolbar flat color="white">
-                          <v-spacer></v-spacer>
-                          <v-card-title>
-                          จำนวน USER ทั้งหมด {{total_user}} คน
-                          </v-card-title>
-                          <v-spacer></v-spacer>
-                          <v-card-title>
-                          Online {{online_user}} คน 
-                          </v-card-title>
-                          <v-spacer></v-spacer>
-                          <v-text-field
-                            v-model="search"
-                            append-icon="mdi-magnify"
-                            label="ค้นหา"
-                            single-line
-                            hide-details
-                            style="
-                              font-family: 'Sarabun', sans-serif !important;
-                            "
-                          ></v-text-field>
-                          <v-dialog v-model="dialog_users" max-width="500px">
-                            <v-card>
-                              <v-card-title>
-                                <span class="headline">{{
-                                  formTitle_users
-                                }}</span>
-                              </v-card-title>
-
-                              <v-card-text>
-                                <v-container>
-                                  <v-row justify="center">
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_users.user"
-                                        label="ชื่อผู้ใช้"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_users.fname"
-                                        label="ชื่อ"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_users.lname"
-                                        label="นามสกุล"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_users.company"
-                                        label="Company"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_users.phone"
-                                        label="เบอร์โทรศัพท์"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field
-                                        v-model="editedItem_users.mail"
-                                        label="E-mail"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <!-- <v-col cols="12" sm="6" md="4"> -->
-                                    <!-- <v-text-field
-                                        v-model="editedItem_users.status"
-                                        label="สิทธิ์"
-                                    ></v-text-field>-->
-                                    <v-col cols="12" sm="12" md="12">
-                                      <v-select
-                                        v-model="editedItem_users.status"
-                                        :items="items"
-                                        label="สิทธิ์"
-                                      ></v-select>
-                                    </v-col>
-                                    <!-- <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_users.date"
-                                        label="date"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                      <v-text-field
-                                        v-model="editedItem_users.update"
-                                        label="Update"
-                                        readonly
-                                      ></v-text-field>
-                                    </v-col>
-                                    </v-col> -->
-                                  </v-row>
-                                </v-container>
-                              </v-card-text>
-
-                              <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="close_users"
-                                  >ยกเลิก</v-btn
-                                >
-                                <v-btn
-                                  color="blue darken-1"
-                                  text
-                                  @click="save_users"
-                                  >บันทึก</v-btn
-                                >
-                              </v-card-actions>
-                            </v-card>
-                          </v-dialog>
-                        </v-toolbar>
-                      </template>
-                      <template v-slot:item.date="{ item }">
-                        {{ new Date(item.date).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.update="{ item }">
-                        {{ new Date(item.update).toLocaleDateString('fr') }}
-                      </template>
-                      <template v-slot:item.online="{ item }">
-                        <v-chip
-                          :color="getColor(item.online)"
-                          dark
-                        >
-                          {{ item.online }}
-                        </v-chip>
-                      </template>
-                      <template v-slot:item.actions="{ item }">
-                        <!-- <v-icon
-                          medium
-                          class="mr-2"
-                          @click="editItem_users(item)"
-                          >mdi-account-edit</v-icon
-                        >
-                        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon> -->
-                        <v-menu left>
-                          <template v-slot:activator="{ on , attrs}">
-                            <v-btn
-                              black
-                              icon
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              <v-icon>mdi-dots-vertical</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list v-show="hidden">
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="editItem_users(item)">
-                                  <v-icon
-                                  medium
-                                  class="mr-2"
-                                  >mdi-account-edit</v-icon>
-                                  เปลี่ยนสิทธิ์ User
-                                </v-btn>
-                              </v-list-item-title>
-                              <v-list-item-title>
-                                <v-btn width="100%" height="40" @click="Wait_delete_users(item)">
-                                  <v-icon 
-                                    medium
-                                    class="mr-2" 
-                                  >mdi-delete</v-icon>
-                                  ลบ User
-                                </v-btn>
-                              </v-list-item-title>
-                          </v-list>
-                        </v-menu>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                  <v-dialog v-model="dialog_W_delete_U" max-width="500px">
-                    <v-card>
-                      <v-card-title>
-                        <span class="headline" >คุณต้องการลบ {{data_delete_user}} หรือไม่</span>
-                      </v-card-title>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="close_users"
-                          >ยกเลิก</v-btn
-                        >
-                        <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="delete_users"
-                          >ตกลง</v-btn
-                        >
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-tab-item>
-              </v-tabs>
-              <v-divider></v-divider>
+                        </template>
+                        <template v-slot:item.member="item">
+                          <v-icon
+                            medium
+                            class="mr-2"
+                            @click="data_all_name(item)"
+                            >mdi-clipboard-account</v-icon
+                          >
+                        </template>
+                        <!--////////////////////////////////////////////////-->
+                        <template v-slot:item.file="item">
+                          <div v-if="item.item.file[0] === 'notRecord'">
+                            <v-icon>mdi-minus</v-icon>
+                          </div>
+                          <div v-else>
+                            <v-icon
+                              medium
+                              class="mr-2"
+                              @click="data_record_name(item)"
+                              >mdi-file-video</v-icon>
+                          </div>
+                        </template>
+                        </v-data-table>
+                      </v-card>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+              </v-layout>
             </v-card>
           </v-row>
         </v-container>
@@ -910,641 +250,503 @@
 </template>
 
 <script>
-export default {
-  data: () => ({
-    items: ["host", "user", "citizen"],
-    hidden: true,
-    limit: "",
-    search: "",
-    alert: false,
-    dialog_admin: false,
-    dialog_host: false,
-    dialog_users: false,
-    dialog_citizen: false,
-    dialog_W_delete_A: false,
-    dialog_W_delete_H: false,
-    dialog_W_delete_C: false,
-    dialog_W_delete_U: false,
-    data_delete: [],
-    data_delete_user: "",
-    headers: [
-      // { text: "ลำดับ", align: "start" , sortable: false , value: "number" },
-      { text: "ชื่อผู้ใช้", value: "user" },
-      { text: "ชื่อ", value: "fname" },
-      { text: "นามสกุล", value: "lname" },
-      { text: "Company", value: "company" },
-      { text: "เบอร์โทรศัพท์", value: "phone" },
-      { text: "E-mail", value: "mail" },
-      { text: "วันที่สมัคร", value: "date" },
-      { text: 'Update', value: 'update' },
-      { text: "สิทธิ์", value: "status" },
-      { text: 'Status', value: 'online' },
-      { text: "Option", value: "actions", sortable: false},
-    ],
-    all_data: [],
-    admin: [],
-    users: [],
-    host: [],
-    citizen: [],
-    total_all: 0,
-    total_bussiness: 0,
-    total_citizen: 0,
-    total_user: 0,
-    online_total: 0,
-    online_bussiness: 0,
-    online_citizen: 0,
-    online_user: 0,
-    editedIndex_admin: -1,
-    editedIndex_host: -1,
-    editedIndex_users: -1,
-    editedIndex_citizen: -1,
-    editedItem_admin: {
-      user: "",
-      fname: "",
-      lname: "",
-      company: "",
-      phone: "",
-      date:"",
-      update:"",
-      mail: "",
-      status: "",
-    },
-    editedItem_host: {
-      user: "",
-      fname: "",
-      lname: "",
-      company: "",
-      phone: "",
-      date:"",
-      update:"",
-      mail: "",
-      status: "",
-    },
-    editedItem_users: {
-      user: "",
-      fname: "",
-      lname: "",
-      company: "",
-      phone: "",
-      date:"",
-      update:"",
-      mail: "",
-      status: "",
-    },
-    editedItem_citizen: {
-      user: "",
-      fname: "",
-      lname: "",
-      company: "",
-      phone: "",
-      date:"",
-      update:"",
-      mail: "",
-      status: "",
-    },
-    defaultItem: {
-      user: "",
-      fname: "",
-      lname: "",
-      company: "",
-      phone: "",
-      date:"",
-      update:"",
-      mail: "",
-      status: "",
-    },
-  }),
-  mounted() {
-    var data_admin = this.$session.get("data");
-    this.limit = data_admin["No_limit"]
-    if (this.limit == true) {
-      this.hidden = true
-    }else{
-      this.hidden = false
-    }
-  },
-  computed: {
-    formTitle_admin() {
-      return this.editedIndex_admin === -1 ? "New User" : "แก้ไข ผู้ดูแลระบบ";
-    },
-    formTitle_host() {
-      return this.editedIndex_host === -1 ? "New User" : "แก้ไข ผู้ใช้งาน";
-    },
-    formTitle_users() {
-      return this.editedIndex_users === -1 ? "New User" : "แก้ไข ผู้ใช้งาน";
-    },
-    formTitle_citizen() {
-      return this.editedIndex_citizen === -1
-        ? "New User"
-        : "แก้ไข ผู้ใช้งาน";
-    },
-  },
+import VueApexCharts from "vue-apexcharts";
+import XLSX from 'xlsx'
 
+export default {
+  components: {
+    apexcharts: VueApexCharts
+  },
+  data() {
+    return {
+      History: false,
+      hidden: false,
+      rate: false,
+      Record: false,
+      total_user: 0,
+      total_meeting: 0,
+      date: new Date().toISOString().substr(0, 10),
+      today: "",
+      rate_date_S: new Date().toISOString().substr(0, 10),
+      rate_date_E: new Date().toISOString().substr(0, 10),
+      rate_show: "",
+      date_show: "",
+      api_user:[],
+      series: [1 , 1 , 1],
+      chartOptions: {
+        labels: ["Business", "Citizen", "User"],
+        dataLabels: {
+          formatter: function(series, opts) {
+            return  opts.w.globals.series[opts.seriesIndex] 
+          }
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 260
+              },
+              legend: {
+                position: "bottom"
+              }
+            }
+          }
+        ],
+        colors: ["#32CD32","#1E90FF","#DC143C"],
+        toolbar: {
+          show: false
+        }
+      },
+      search: '',
+      headers: [
+        { text: 'ชื่อห้อง' , align: 'start' , filterable: false , value: 'room_name'},
+        { text: 'ชื่อเจ้าของห้อง', value: 'owner' },
+        { text: "Company", value: "company" },
+        { text: 'วันที่ประชุม' , value: 'date'},
+        { text: 'start time' , value: 's_time'},
+        { text: 'end time' , value: 'e_time'},
+        { text: 'จำนวนผู้ร่วมประชุม' , value: 'attendee'},
+        { text: "รายชื่อผู้ร่วมประชุม", value: "member", sortable: false },
+        { text: "record", value: "file", sortable: false },
+      ],
+      header_member: [
+        { text: 'รายชื่อ' , align: 'start' , filterable: false , value: 'member_name'},
+        { text: 'เวลาเข้าห้องประชุม', value: 'join_at' },
+        { text: 'เวลาออกห้องประชุม', value: 'out_at' },
+      ],
+      header_record: [
+        { text: 'ชื่อไฟล์' , align: 'start' , filterable: false , value: 'file_name'},
+        { text: 'ขนาดไฟล์', value: 'size' },
+      ],
+      desserts: [],
+      meeting: [],
+      Recordfile:[],
+    };
+  },
   watch: {
     dialog_admin(val) {
       val || this.close_admin();
     },
-    dialog_host(val) {
-      val || this.close_host();
-    },
-    dialog_users(val) {
-      val || this.close_users();
-    },
-    dialog_citizen(val) {
-      val || this.close_citizen();
-    },
   },
-
   created() {
-    // this.initialize();
-    this.alldata();
+    this.date_API();
+    this.date_time();
   },
   methods: {
-    getColor (online) {
-      if (online == "ON") return 'green'
-      else if (online == "OFF") return 'red'
-      else return 'white'
+    async date_API(){
+      var API_Data = await this.axios.get(
+        // process.env.VUE_APP_API + "/api/users/data",{
+          "https://meet.one.th/secret/api/users/data",{
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+        }
+      );
+      this.api_user = API_Data.data.data;
     },
-    initialize() {
-      this.admin = [
-        {
-          number: "",
-          user: "Admin01",
-          fname: "SON",
-          lname: "SAA",
-          company: "Inet",
-          phone: "123",
-          date:"",
-          update:"",
-          mail: "T@inet",
-          online:"",
-          status: "admin",
-        },
-      ];
-      this.host = [
-        {
-          number: "",
-          user: "Host01",
-          fname: "Han",
-          lname: "Solo",
-          company: "PPP",
-          phone: "789",
-          date:"",
-          update:"",
-          mail: "B@JADI",
-          online:"",
-          status: "host",
-        },
-      ];
-      this.users = [
-        {
-          number: "",
-          user: "User01",
-          fname: "non",
-          lname: "STA",
-          company: "NN",
-          phone: "456",
-          date:"",
-          update:"",
-          mail: "B@gmail",
-          online:"",
-          status: "user",
-        },
-      ];
-      this.citizen = [
-        {
-          number: "",
-          user: "ban01",
-          fname: "ERR",
-          lname: "WER",
-          company: "??",
-          phone: "1212312121",
-          date:"",
-          update:"",
-          mail: "B@ZIZI",
-          online:"",
-          status: "citizen",
-        },
-      ];
+    date_time(type){
+      var data_type = type
+      if( data_type == undefined){
+        data_type = "today"
+      }
+      var timenow = new Date();
+      var timenow_day = timenow.getDate();
+      var timenow_month = timenow.getMonth() + 1;
+      var timenew_year = timenow.getFullYear();
+      if(timenow_day<10){
+        var string_day = "0"+timenow_day
+      }else{
+        string_day = timenow_day
+      }
+      if(timenow_month<10){
+        var string_month = "0"+timenow_month
+      }else{
+        string_month = timenow_month
+      }
+      var day_begin = string_day + "/" + string_month + "/" + timenew_year;
+      // var timenow_Hours = timenow.getHours();
+      // var timenow_Minut = timenow.getMinutes();
+      // var timenow_Secon = timenow.getSeconds();
+      // var time_begin = timenow_Hours + ":" + timenow_Minut + ":" + timenow_Secon;
+      if(data_type == "today"){
+        this.date_show = day_begin;
+        this.rate_show = day_begin;
+      }else{
+        this.date_show = "ALL";
+      }
+      this.today = day_begin
+      this.User_dashboard();
+      this.meeting_dashboard();
     },
-    ////////////////////////////    API    ////////////////////////////////
-    async alldata() {
-      var data_ALL = [];
-      var data_Update = [];
-      var on_status;
-      var role;
+    async User_dashboard() {
       var N_total = 0;
       var N_host = 0;
       var N_citizen = 0;
       var N_user = 0;
-      var online_total = 0;
-      var host_online = 0;
-      var citizen_online = 0;
-      var user_online = 0;
-      var date_NF = Date.now();
-      var date_now_1 = new Date(date_NF);
-      var date_now_2 = date_now_1.toISOString();
-      var API_Data = await this.axios.get(
-        "https://meet.one.th/secret/api/users/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
-        }
-      );
-      var data = API_Data.data.data;
-      var API_Roles = await this.axios.get(
-        "https://meet.one.th/secret/api/roles/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
-        }
-      );
-      var roles = API_Roles.data.data;
-      var API_ssr = await this.axios.get(
-        "https://meet.one.th/secret/api/rooms/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
-        }
-      );
-      var ssr = API_ssr.data.data;
-      for (let i = 0; i < data.length; i++) {
-        for (let j = 0; j < roles.length; j++) {
-          if (data[i]["role"] == roles[j]["_id"]) {
-            role = roles[j]["name"];
-          }
-        }
-        for (let k = 0; k < ssr.length; k++) {
-          if (data[i]["oneid"] == ssr[k]["oneid"]) {
-            on_status = "ON";
-            break
-          }else{
-            on_status = "OFF";
-          }
-        }
-        // if(data[i]["disable"] == false) {
-          if (role == "admin") {
-            data_ALL = [
-              {
-                // number: N_admin,
-                user: data[i]["username"],
-                fname: data[i]["name"],
-                lname: data[i]["lastname"],
-                company: data[i]["company"],
-                phone: data[i]["phonenumber"],
-                date: data[i]["created_at"],
-                update: data[i]["updated_at"],
-                mail: data[i]["email"],
-                online: on_status,
-                status: role,
-              },
-            ];
-          } if (role == "host") {
-            data_ALL = [
-              {
-                // number: N_host,
-                user: data[i]["username"],
-                fname: data[i]["name"],
-                lname: data[i]["lastname"],
-                company: data[i]["company"],
-                phone: data[i]["phonenumber"],
-                date: data[i]["created_at"],
-                update: data[i]["updated_at"],
-                mail: data[i]["email"],
-                online: on_status,
-                status: role,
-              },
-            ];
-            N_host = N_host + 1;
-            N_total = N_total + 1;
-            if(on_status == "ON"){
-              host_online = host_online + 1;
-              online_total = online_total + 1;
-            }
-          } if (role == "user") {
-            data_ALL = [
-              {
-                // number: N_user,
-                user: data[i]["username"],
-                fname: data[i]["name"],
-                lname: data[i]["lastname"],
-                company: data[i]["company"],
-                phone: data[i]["phonenumber"],
-                date: data[i]["created_at"],
-                update: data[i]["updated_at"],
-                mail: data[i]["email"],
-                online: on_status,
-                status: role,
-              },
-            ];
-            N_user = N_user + 1;
-            N_total = N_total + 1;
-            if(on_status == "ON"){
-              user_online = user_online + 1;
-              online_total = online_total + 1;
-            }
-          } if (role == "citizen") {
-            data_ALL = [
-              {
-                // number: N_citizen,
-                user: data[i]["username"],
-                fname: data[i]["name"],
-                lname: data[i]["lastname"],
-                company: data[i]["company"],
-                phone: data[i]["phonenumber"],
-                date: data[i]["created_at"],
-                update: data[i]["updated_at"],
-                mail: data[i]["email"],
-                online: on_status,
-                status: role,
-              },
-            ];
-            N_citizen = N_citizen + 1;
-            N_total = N_total + 1;
-            if(on_status == "ON"){
-              citizen_online = citizen_online + 1;
-              online_total = online_total + 1;
-            }
-          }
-          data_Update = [
-            {
-              id: data[i]["_id"],
-              user: data[i]["username"],
-              fname: data[i]["name"],
-              lname: data[i]["lastname"],
-              company: data[i]["company"],
-              phone: data[i]["phonenumber"],
-              date: data[i]["created_at"].split("T","1"),
-              update: date_now_2,
-              mail: data[i]["email"],
-              status: role,
-            },
-          ];
-          this.all_data.push(data_Update[0]);
-          this.admin.push(data_ALL[0]);
-          if (role == "host") {
-            this.host.push(data_ALL[0]);
-          } else if (role == "user") {
-            this.users.push(data_ALL[0]);
-          } else if (role == "citizen") {
-            this.citizen.push(data_ALL[0]);
-          }
-        // }
-      }
-      this.total_all = N_total
-      this.total_bussiness = N_host
-      this.total_citizen = N_citizen
-      this.total_user = N_user
-      this.online_total = online_total
-      this.online_bussiness = host_online
-      this.online_citizen = citizen_online
-      this.online_user = user_online
-    },
-    async update(data) {
-      var API_Data = await this.axios.get(
-        // process.env.VUE_APP_API + "/api/users/data",{
-        //   headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
-        // }
-        "https://meet.one.th/secret/api/users/data"
-      );
-      var data_api = API_Data.data.data;
+      var total_push = [];
+      var data_CD = [];
+      var data = this.api_user;
       var API_Roles = await this.axios.get(
         // process.env.VUE_APP_API + "/api/roles/data",{
-        //   headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
-        // }
-        "https://meet.one.th/secret/api/roles/data"
-      );
-      var roles = API_Roles.data.data;
-      for (let i = 0; i < this.all_data.length; i++) {
-        if (data["user"] == this.all_data[i]["user"]) {
-          var data_id = this.all_data[i]["id"];
-        }
-      }
-      for (let j = 0; j < data_api.length; j++) {
-        if (data_id == data_api[j]["_id"]) {
-          var data_target = data_api[j];
-        }
-      }
-      for (let k = 0; k < roles.length; k++) {
-        if (data["status"] == roles[k]["name"]) {
-          var roles_id = roles[k]["_id"];
-        }
-      }
-      data_target["role"] = roles_id;
-      await this.axios.put(
-        process.env.VUE_APP_API + "/api/users/updatestatus",
-        data_target,{
+          "https://meet.one.th/secret/api/roles/data",{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
-      this.admin = [];
-      this.host = [];
-      this.users = [];
-      this.citizen = [];
-      this.alldata();
+      var roles = API_Roles.data.data;
+      for (let k = 0; k < data.length; k++) {
+        var date = data[k]["created_at"].split("T")[0].split("-")[2]
+        +"/"+data[k]["created_at"].split("T")[0].split("-")[1]
+        +"/"+data[k]["created_at"].split("T")[0].split("-")[0];
+        data_CD.push([data[k]["role"] , date])
+      }
+      for (let i = 0; i < data_CD.length; i++) {
+        if (this.date_show == "ALL") {
+          for (let j = 0; j < roles.length; j++) {
+            if (data_CD[i][0] == roles[j]["_id"]) {
+              var role = roles[j]["name"];
+            }
+          }
+          if (role == "host") {
+            // this.host.push(data_ALL[0]);
+            N_host = N_host + 1;
+            N_total = N_total + 1;
+          } else if (role == "user") {
+            // this.users.push(data_ALL[0]);
+            N_user = N_user + 1;
+            N_total = N_total + 1;
+          } else if (role == "citizen") {
+            // this.citizen.push(data_ALL[0]);
+            N_citizen = N_citizen + 1;
+            N_total = N_total + 1;
+          }
+        }else {
+          for (let j = 0; j < roles.length; j++) {
+            if (data_CD[i][0] == roles[j]["_id"]) {
+              role = roles[j]["name"];
+            }
+          }
+          if (role == "host") {
+            // this.host.push(data_ALL[0]);
+            N_host = N_host + 1;
+            N_total = N_total + 1;
+          } else if (role == "user") {
+            // this.users.push(data_ALL[0]);
+            N_user = N_user + 1;
+            N_total = N_total + 1;
+          } else if (role == "citizen") {
+            // this.citizen.push(data_ALL[0]);
+            N_citizen = N_citizen + 1;
+            N_total = N_total + 1;
+          }
+        }
+      }
+      this.total_user = N_total
+      total_push.push(N_host , N_citizen , N_user)
+      this.series = total_push
     },
-    async delete(data) {
-      await this.axios.put(
-        process.env.VUE_APP_API + "/api/users/disable",{
-          username: data.user,
-          email: data.mail,
-          disable: true,
+    async meeting_dashboard(){
+      var N_meet = 0;
+      var data_ALL = [];
+      var attendee_All = [];
+      var record_ALL = [];
+      var Company_user;
+      this.meeting = [];
+      var room = [];
+      var history_rooms = await this.axios.post(
+        // process.env.VUE_APP_API + "/api/History_rooms/data",{
+        "https://meet.one.th/secret/api/History_rooms/data",{
+          date : this.date_show,
+          rate : this.rate_show
         },{
           headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
         }
       );
-      this.admin = [];
-      this.host = [];
-      this.users = [];
-      this.citizen = [];
-      this.alldata();
+      var data = history_rooms.data.data
+      var record = await this.axios.get(
+        // process.env.VUE_APP_API + "/api/onebox/record",{
+        "https://meet.one.th/secret/api/onebox/record",{
+          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+        }
+      );
+      var file = record.data.recore
+      var data_user = this.api_user;
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i]["member"].length; j++) {
+          if(data[i]["member"][j]["email"] != undefined && data[i]["member"][j]["email"].code == undefined){
+            attendee_All.push({
+              attendee: data[i]["member"][j]["email"].split("@")[0],
+              join_at: data[i]["member"][j]["join_at"],
+              out_at: data[i]["member"][j]["out_at"],
+            })
+          }
+          if(data[i]["member"][j]["attendee"] != undefined && data[i]["member"][j]["attendee"].code == undefined){
+            attendee_All.push({
+              attendee: data[i]["member"][j]["attendee"].split("-")[0],
+              join_at: data[i]["member"][j]["join_at"],
+              out_at: data[i]["member"][j]["out_at"],
+            })
+          }
+        }
+        for (let k = 0; k < file.length; k++) {
+          if(file[k].meetingid == data[i]["meeting_id"]){
+            record_ALL.push({
+              name : file[k]["filename"],
+              size : file[k]["size"]
+            })
+          }
+        }
+        for (let l = 0; l < data_user.length; l++) {
+          if(data_user[l]["username"] == data[i]["username"]){
+            Company_user = data_user[l]["company"]
+          }
+        }
+        if (this.date_show == "ALL") {
+          if(record_ALL.length == 0){
+            record_ALL.push("notRecord")
+          }
+          data_ALL = [
+            {
+              room_name: data[i]["name"],
+              owner: data[i]["username"],
+              company:Company_user,
+              date: data[i]["date"],
+              s_time: data[i]["start_time"],
+              e_time: data[i]["end_time"],
+              attendee: data[i]["attendee"],
+              member: attendee_All,
+              file: record_ALL
+            },
+          ];
+          N_meet = N_meet + 1;
+          room.push(data_ALL[0]);
+        }else {
+          if(record_ALL.length == 0){
+            record_ALL.push("notRecord")
+          }
+          data_ALL = [
+            {
+              room_name: data[i]["name"],
+              owner: data[i]["username"],
+              company:Company_user,
+              date: data[i]["date"],
+              s_time: data[i]["start_time"],
+              e_time: data[i]["end_time"],
+              attendee: data[i]["attendee"],
+              member: attendee_All,
+              file: record_ALL
+            },
+          ];
+          N_meet = N_meet + 1;
+          room.push(data_ALL[0]);
+        }
+        attendee_All = [];
+        record_ALL = [];
+      }
+      this.total_meeting = N_meet
+      this.meeting = room
     },
-    ///////////////////////////////////////////////////////////////////////
-    editItem_admin(item) {
-      if (this.limit == true) {
-        this.editedIndex_admin = this.admin.indexOf(item);
-        this.editedItem_admin = Object.assign({}, item);
-        this.dialog_admin = true;
+    data_all_name (item) {
+      this.desserts = [];
+      var member = [];
+      for (let i = 0; i < item["item"]["member"].length; i++) {
+        if(typeof item["item"]["member"][i]["join_at"] == "object"){
+          for(let j = 0; j < item["item"]["member"][i]["join_at"].length; j++){
+            if(item["item"]["member"][i]["out_at"][j] != undefined){
+              member = [
+                {
+                  member_name: item["item"]["member"][i]["attendee"],
+                  join_at: new Date(item["item"]["member"][i]["join_at"][j]).toLocaleTimeString(),
+                  out_at: new Date(item["item"]["member"][i]["out_at"][j]).toLocaleTimeString(),
+                },
+              ];
+            } else {
+              member = [
+                {
+                  member_name: item["item"]["member"][i]["attendee"],
+                  join_at: new Date(item["item"]["member"][i]["join_at"][j]).toLocaleTimeString(),
+                  out_at: "",
+                },
+              ];
+            }
+            this.desserts.push(member[0]);
+          }
+        }else {
+          if(item["item"]["member"][i]["out_at"] != ""){
+            member = [
+              {
+                member_name: item["item"]["member"][i]["attendee"],
+                join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
+                out_at: new Date(item["item"]["member"][i]["out_at"]).toLocaleTimeString(),
+              },
+            ];
+          } else {
+            member = [
+              {
+                member_name: item["item"]["member"][i]["attendee"],
+                join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
+                out_at: "",
+              },
+            ];
+          }
+          this.desserts.push(member[0]);
+        }
+      }
+      this.History = true;
+    },
+    data_record_name (item) {
+      this.Recordfile = [];
+      var Recorddata = [];
+      if(item["item"]["file"][0] != "notRecord"){
+        for (let i = 0; i < item["item"]["file"].length; i++) {
+          Recorddata = [
+            {
+              file_name: item["item"]["file"][i]["name"],
+              size: item["item"]["file"][i]["size"]
+            },
+          ];
+          this.Recordfile.push(Recorddata[0]);
+        }
+      }else{
+        Recorddata = [
+          {
+            file_name: "NO File",
+            size: "-"
+          },
+        ];
+        this.Recordfile.push(Recorddata[0]);
+      }
+      this.Record = true;
+    },
+    select_data (value) {
+      this.meeting = [];
+      this.hidden = false;
+      this.date_show = value.split("-")[2]+"/"+value.split("-")[1]+"/"+value.split("-")[0]
+      this.rate_show = this.date_show
+      this.rate_date_S = value
+      this.rate_date_E = value
+      this.User_dashboard();
+      this.meeting_dashboard();
+    },
+    select_rate_S (value) {
+      this.meeting = [];
+      this.hidden = false;
+      this.rate_show = value.split("-")[2]+"/"+value.split("-")[1]+"/"+value.split("-")[0]
+      if(this.date_show == "ALL"){
+        this.date_show = this.today;
+      }
+      this.User_dashboard();
+      this.meeting_dashboard();
+    },
+    select_rate_E (value) {
+      this.meeting = [];
+      this.hidden = false;
+      this.date_show = value.split("-")[2]+"/"+value.split("-")[1]+"/"+value.split("-")[0]
+      this.date = value
+      this.User_dashboard();
+      this.meeting_dashboard();
+    },
+    data_all:function (data) {
+      this.meeting = [];
+      this.hidden = true;
+      this.rate = false;
+      this.date_show = data;
+      this.rate_date_S = new Date().toISOString().substr(0, 10);
+      this.rate_date_E = new Date().toISOString().substr(0, 10);
+      this.User_dashboard();
+      this.meeting_dashboard();
+    },
+    rate_on (){
+      this.rate = true;
+    },
+    rate_off (){
+      this.rate = false;
+      this.select_data(this.date)
+    },
+    onExport() {
+      var from = []
+      var excal = []
+      var sum = []
+      for (let i = 0; i < this.meeting.length; i++) {
+        var sum_time = this.sumtime(this.meeting[i]["s_time"],this.meeting[i]["e_time"])
+        from = [
+            {
+              ลำดับ : i+1,
+              ชื่อห้อง : this.meeting[i]["room_name"],
+              ชื่อผู้ใช้ : this.meeting[i]["owner"],
+              Company : this.meeting[i]["company"],
+              วันที่ประชุม : this.meeting[i]["date"],
+              จำนวนผู้ร่วมประชุม: this.meeting[i]["attendee"],
+              Start : this.meeting[i]["s_time"],
+              Stop : this.meeting[i]["e_time"],
+              เวลารวม : sum_time
+            },
+          ];
+        excal.push(from[0])
+        sum.push(sum_time)
+      }
+      var st = this.arraytime(sum)
+      from = [
+            {
+              ลำดับ : "เวลารวมทั้งหมด",
+              ชื่อห้อง : "",
+              ชื่อผู้ใช้ : "",
+              Company : "",
+              วันที่ประชุม : "",
+              จำนวนผู้ร่วมประชุม: "",
+              Start : "",
+              Stop : "",
+              เวลารวม : st
+            },
+          ];
+      excal.push(from[0])
+      var merge = [{ s: { r: this.meeting.length+1, c: 0 }, e: { r: this.meeting.length+1, c: 7 } },];
+      var dataWS = XLSX.utils.json_to_sheet(excal)
+      var wb = XLSX.utils.book_new()
+      dataWS["!merges"] = merge;
+      dataWS["A1"].s = {
+        alignment: {
+            vertical: "center",
+            horizontal: "center",
+            wrapText: true
+        }
+      }
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb,'History_'+this.date_show+'_meeting_'+this.total_meeting+'.xlsx')
+    },
+    sumtime(S,E){
+      if(E != ""){
+        var start = S.split(":");
+        var end = E.split(":");
+        var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+        var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+        var diff = endDate.getTime() - startDate.getTime();
+        var hours = Math.floor(diff / 1000 / 60 / 60);
+        diff -= hours * 1000 * 60 * 60;
+        var minutes = Math.floor(diff / 1000 / 60);
+        if (hours < 0){
+          hours = hours + 24;
+        }
+        var sum = (hours <= 9 ? "0" : "") + hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+        return sum
       } else {
-        this.alert = true;
+        return ""
       }
     },
-
-    editItem_host(item) {
-      if (this.limit == true) {
-        this.editedIndex_host = this.host.indexOf(item);
-        this.editedItem_host = Object.assign({}, item);
-        this.dialog_host = true;
-      } else {
-        this.alert = true;
+    arraytime(myArray){
+      var hours = 0
+      var minutes = 0
+      for(var i in myArray){
+      if(myArray[i] != ""){
+        hours = hours + parseInt(myArray[i].substring(0, 2))
+        minutes = minutes + parseInt(myArray[i].substring(3, 5))
       }
-    },
-
-    editItem_users(item) {
-      if (this.limit == true) {
-        this.editedIndex_users = this.users.indexOf(item);
-        this.editedItem_users = Object.assign({}, item);
-        this.dialog_users = true;
-      } else {
-        this.alert = true;
       }
-    },
-
-    editItem_citizen(item) {
-      if (this.limit == true) {
-        this.editedIndex_citizen = this.citizen.indexOf(item);
-        this.editedItem_citizen = Object.assign({}, item);
-        this.dialog_citizen = true;
-      } else {
-        this.alert = true;
+      if(minutes > 59){
+        hours = hours + parseInt(minutes / 60);
+        minutes = parseInt(minutes % 60);
       }
-    },
-    close_admin() {
-      this.dialog_admin = false;
-      this.dialog_W_delete_A = false;
-      this.$nextTick(() => {
-        this.editedItem_admin = Object.assign({}, this.defaultItem);
-        this.editedIndex_admin = -1;
-      });
-    },
-    close_host() {
-      this.dialog_host = false;
-      this.dialog_W_delete_H = false;
-      this.$nextTick(() => {
-        this.editedItem_host = Object.assign({}, this.defaultItem);
-        this.editedIndex_host = -1;
-      });
-    },
-    close_users() {
-      this.dialog_users = false;
-      this.dialog_W_delete_U = false;
-      this.$nextTick(() => {
-        this.editedItem_users = Object.assign({}, this.defaultItem);
-        this.editedIndex_users = -1;
-      });
-    },
-    close_citizen() {
-      this.dialog_citizen = false;
-      this.dialog_W_delete_C = false;
-      this.$nextTick(() => {
-        this.editedItem_citizen = Object.assign({}, this.defaultItem);
-        this.editedIndex_citizen = -1;
-      });
-    },
-    save_admin() {
-      if (this.editedIndex_admin > -1) {
-        Object.assign(
-          this.admin[this.editedIndex_admin],
-          this.editedItem_admin
-        );
-        this.update(this.admin[this.editedIndex_admin]);
-      } else {
-        this.admin.push(this.editedItem_admin);
-      }
-      this.close_admin();
-    },
-    save_host() {
-      if (this.editedIndex_host > -1) {
-        Object.assign(this.host[this.editedIndex_host], this.editedItem_host);
-        this.update(this.host[this.editedIndex_host]);
-      } else {
-        this.user.push(this.editedItem_host);
-      }
-      this.close_host();
-    },
-    save_users() {
-      if (this.editedIndex_users > -1) {
-        Object.assign(
-          this.users[this.editedIndex_users],
-          this.editedItem_users
-        );
-        this.update(this.users[this.editedIndex_users]);
-      } else {
-        this.user.push(this.editedItem_users);
-      }
-      this.close_users();
-    },
-    save_citizen() {
-      if (this.editedIndex_citizen > -1) {
-        Object.assign(
-          this.citizen[this.editedIndex_citizen],
-          this.editedItem_citizen
-        );
-        this.update(this.citizen[this.editedIndex_citizen]);
-      } else {
-        this.citizen.push(this.editedItem_citizen);
-      }
-      this.close_citizen();
-    },
-    clear() {
-      this.search = "";
-    },
-    Wait_delete_admin(item) {
-      this.editedIndex_admin = this.admin.indexOf(item);
-      this.editedItem_admin = Object.assign({}, item);
-      this.dialog_W_delete_A = true;
-    },
-    Wait_delete_host(item) {
-      this.editedIndex_host = this.host.indexOf(item);
-      this.editedItem_host = Object.assign({}, item);
-      this.dialog_W_delete_H = true;
-    },
-    Wait_delete_citizen(item) {
-      this.editedIndex_citizen = this.citizen.indexOf(item);
-      this.editedItem_citizen = Object.assign({}, item);
-      this.dialog_W_delete_C = true;
-    },
-    Wait_delete_users(item) {
-      this.editedIndex_users = this.users.indexOf(item);
-      this.editedItem_users = Object.assign({}, item);
-      this.dialog_W_delete_U = true;
-    },
-    delete_admin(){
-      Object.assign(this.admin[this.editedIndex_admin], this.editedItem_admin);
-      this.delete(this.admin[this.editedIndex_admin]);
-      this.close_admin();
-    },
-    delete_host(){
-      Object.assign(this.host[this.editedIndex_host], this.editedItem_host);
-      this.delete(this.host[this.editedIndex_host]);
-      this.close_host();
-    },
-    delete_citizen(){
-      Object.assign(this.citizen[this.editedIndex_citizen], this.editedItem_citizen);
-      this.delete(this.citizen[this.editedIndex_citizen]);
-      this.close_citizen();
-    },
-    delete_users(){
-      Object.assign(this.users[this.editedIndex_users], this.editedItem_users);
-      this.delete(this.users[this.editedIndex_users]);
-      this.close_users();
-    },
-  },
+      var sum = hours + ":" + minutes;
+      return sum
+    }
+  }
 };
 </script>
-
-<style>
-.use-table th {
-  background-color: #32cd32;
-  font-size: 18px !important;
-  color: #ffffff !important;
-  font-family: "Sarabun", sans-serif;
-  padding-right: 0% !important;
-}
-
-.table-name {
-  font-size: 25px;
-  color: #1e90ff;
-  font-family: "Sarabun", sans-serif;
-  padding-left: 5%;
-}
-
-/*========================================*/
-
-@media only screen and (max-width: 600px) {
-  /*css for mobile screen*/
-  .tab-name {
-    font-size: 13px;
-  }
-
-  .table-name {
-    font-size: 26px !important;
-    padding-left: 0%;
-    padding-right: 0%;
-  }
-}
-</style>

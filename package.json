@@ -14,16 +14,21 @@
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
     "eslint": "^7.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
     "mutation-observer": "^1.0.3",
     "mutationobserver-shim": "^0.3.7",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.6.0",
     "vue-axios": "^2.1.5",
+    "vue-cryptojs": "^2.2.1",
     "vue-pdf": "^4.1.0",
     "vue-poll": "^0.1.8",
     "vue-router": "^3.4.1",
     "vue-sessionstorage": "^1.0.0",
-    "vuetify": "^2.2.11"
+    "vuejs-jwt": "^1.1.0",
+    "vuetify": "^2.2.11",
+    "xlsx": "^0.17.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.0",

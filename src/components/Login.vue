@@ -192,15 +192,12 @@ export default {
         .post(process.env.VUE_APP_API + "/api/admin/login", {
           user: username,
           password: password,
-        },{
-          headers: { 'Authorization': `token ${process.env.VUE_APP_TOKEN}` }
         })
         .then((response) => {
           var status = response.data.status;
-          var data_login = response.data.data;
+          var data_login = response.data.token;
           ///////////////////////////////////////////////////////////////////////
           if (status === "OK") {
-            this.$router.push({ path: "/User" });
             this.sessionData(data_login);
           }
           ///////////////////////////////////////////////////////////////////////
@@ -225,9 +222,21 @@ export default {
         });
     },
     sessionData(data) {
-      this.$session.set("id", data["_id"]);
-      this.$session.set("user", data["user"]);
-      this.$session.set("data", data);
+      var jwt = require('jsonwebtoken')
+      this.$session.set("token", data);
+      var token = this.$session.get('token')
+      const decryptedText = this.$CryptoJS.AES.decrypt(
+        token,
+        process.env.VUE_APP_SECRET_TOKEN
+      )
+        .toString(this.CryptoJS.enc.Utf8)
+        .replace(/"/g, '')
+      this.$session.set("jwt", decryptedText);
+      var data_jwt = jwt.decode(decryptedText)
+      this.$session.set("data", data_jwt);
+      if (this.$session.get("data")) {
+        this.$router.push({ path: "/User" });
+      }
     },
   },
   watch: {

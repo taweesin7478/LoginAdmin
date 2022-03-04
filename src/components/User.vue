@@ -218,6 +218,15 @@
                                 </v-btn>
                               </v-list-item-title>
                               <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editverify_admin(item)" >
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  แก้ไข verifyemail
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
                                 <v-btn width="100%" height="40" @click="Wait_delete_admin(item)">
                                   <v-icon 
                                     medium
@@ -248,6 +257,35 @@
                           color="blue darken-1"
                           text
                           @click="delete_admin"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                  <v-dialog v-model="dialogemail_admin" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >แก้ไขการ verify email ของ  {{editverifye_admin.user}}</span>
+                      </v-card-title>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-select
+                          v-model="editverifye_admin.verify"
+                          :items="verify"
+                          label="verify"
+                        ></v-select>
+                      </v-col>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_admin"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="verifye_admin"
                           >ตกลง</v-btn
                         >
                       </v-card-actions>
@@ -429,6 +467,15 @@
                                 </v-btn>
                               </v-list-item-title>
                               <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editverify_host(item)" >
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  แก้ไข verifyemail
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
                                 <v-btn width="100%" height="40" @click="Wait_delete_host(item)">
                                   <v-icon 
                                     medium
@@ -459,6 +506,35 @@
                           color="blue darken-1"
                           text
                           @click="delete_host"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                  <v-dialog v-model="dialogemail_host" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >แก้ไขการ verify email ของ  {{editverifye_host.user}}</span>
+                      </v-card-title>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-select
+                          v-model="editverifye_host.verify"
+                          :items="verify"
+                          label="verify"
+                        ></v-select>
+                      </v-col>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_host"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="verifye_host"
                           >ตกลง</v-btn
                         >
                       </v-card-actions>
@@ -646,6 +722,15 @@
                                 </v-btn>
                               </v-list-item-title>
                               <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editverify_citizen(item)" >
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  แก้ไข verifyemail
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
                                 <v-btn width="100%" height="40" @click="Wait_delete_citizen(item)">
                                   <v-icon 
                                     medium
@@ -676,6 +761,35 @@
                           color="blue darken-1"
                           text
                           @click="delete_citizen"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                  <v-dialog v-model="dialogemail_citizen" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >แก้ไขการ verify email ของ  {{editverifye_citizen.user}}</span>
+                      </v-card-title>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-select
+                          v-model="editverifye_citizen.verify"
+                          :items="verify"
+                          label="verify"
+                        ></v-select>
+                      </v-col>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_citizen"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="verifye_citizen"
                           >ตกลง</v-btn
                         >
                       </v-card-actions>
@@ -863,6 +977,15 @@
                                 </v-btn>
                               </v-list-item-title>
                               <v-list-item-title>
+                                <v-btn width="100%" height="40" @click="editverify_users(item)" >
+                                  <v-icon
+                                  medium
+                                  class="mr-2"
+                                  >mdi-account-edit</v-icon>
+                                  แก้ไข verifyemail
+                                </v-btn>
+                              </v-list-item-title>
+                              <v-list-item-title>
                                 <v-btn width="100%" height="40" @click="Wait_delete_users(item)">
                                   <v-icon 
                                     medium
@@ -898,6 +1021,35 @@
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
+                  <v-dialog v-model="dialogemail_users" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline" >แก้ไขการ verify email ของ  {{editverifye_users.user}}</span>
+                      </v-card-title>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-select
+                          v-model="editverifye_users.verify"
+                          :items="verify"
+                          label="verify"
+                        ></v-select>
+                      </v-col>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="close_users"
+                          >ยกเลิก</v-btn
+                        >
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="verifye_users"
+                          >ตกลง</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-tab-item>
               </v-tabs>
               <v-divider></v-divider>
@@ -913,6 +1065,7 @@
 export default {
   data: () => ({
     items: ["host", "user", "citizen"],
+    verify: [true, false],
     hidden: true,
     limit: "",
     search: "",
@@ -921,6 +1074,10 @@ export default {
     dialog_host: false,
     dialog_users: false,
     dialog_citizen: false,
+    dialogemail_admin: false,
+    dialogemail_host: false,
+    dialogemail_users: false,
+    dialogemail_citizen: false,
     dialog_W_delete_A: false,
     dialog_W_delete_H: false,
     dialog_W_delete_C: false,
@@ -937,6 +1094,7 @@ export default {
       { text: "E-mail", value: "mail" },
       { text: "วันที่สมัคร", value: "date" },
       { text: 'Last Login', value: 'update' },
+      { text: 'activemail', value: 'verify' },
       { text: "สิทธิ์", value: "status" },
       { text: 'Status', value: 'online' },
       { text: "Option", value: "actions", sortable: false},
@@ -958,6 +1116,58 @@ export default {
     editedIndex_host: -1,
     editedIndex_users: -1,
     editedIndex_citizen: -1,
+    verifyeIndex_admin: -1,
+    verifyeIndex_host: -1,
+    verifyeIndex_users: -1,
+    verifyeIndex_citizen: -1,
+    editverifye_admin:{
+      user: "",
+      fname: "",
+      lname: "",
+      company: "",
+      phone: "",
+      date:"",
+      update:"",
+      mail: "",
+      status: "",
+      verify: ""
+    },
+    editverifye_host:{
+      user: "",
+      fname: "",
+      lname: "",
+      company: "",
+      phone: "",
+      date:"",
+      update:"",
+      mail: "",
+      status: "",
+      verify: ""
+    },
+    editverifye_users:{
+      user: "",
+      fname: "",
+      lname: "",
+      company: "",
+      phone: "",
+      date:"",
+      update:"",
+      mail: "",
+      status: "",
+      verify: ""
+    },
+    editverifye_citizen:{
+      user: "",
+      fname: "",
+      lname: "",
+      company: "",
+      phone: "",
+      date:"",
+      update:"",
+      mail: "",
+      status: "",
+      verify: ""
+    },
     editedItem_admin: {
       user: "",
       fname: "",
@@ -1016,7 +1226,7 @@ export default {
   }),
   mounted() {
     var data_admin = this.$session.get("data");
-    this.limit = data_admin["No_limit"]
+    this.limit = data_admin.limit
     if (this.limit == true) {
       this.hidden = true
     }else{
@@ -1079,6 +1289,7 @@ export default {
           mail: "T@inet",
           online:"",
           status: "admin",
+          verify: "true"
         },
       ];
       this.host = [
@@ -1094,6 +1305,7 @@ export default {
           mail: "B@JADI",
           online:"",
           status: "host",
+          verify: "false"
         },
       ];
       this.users = [
@@ -1109,6 +1321,7 @@ export default {
           mail: "B@gmail",
           online:"",
           status: "user",
+          verify: "true"
         },
       ];
       this.citizen = [
@@ -1124,11 +1337,13 @@ export default {
           mail: "B@ZIZI",
           online:"",
           status: "citizen",
+          verify: "false",
         },
       ];
     },
     ////////////////////////////    API    ////////////////////////////////
     async alldata() {
+      this.session_exp()
       var data_ALL = [];
       var data_Update = [];
       var on_status;
@@ -1144,21 +1359,24 @@ export default {
       var date_NF = Date.now();
       var date_now_1 = new Date(date_NF);
       var date_now_2 = date_now_1.toISOString();
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/users/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       var roles = API_Roles.data.data;
       var API_ssr = await this.axios.get(
         process.env.VUE_APP_API + "/api/rooms/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       var ssr = API_ssr.data.data;
@@ -1189,6 +1407,7 @@ export default {
                 date: data[i]["created_at"],
                 update: data[i]["updated_at"],
                 mail: data[i]["email"],
+                verify: data[i]["verifyemail"],
                 online: on_status,
                 status: role,
               },
@@ -1205,6 +1424,7 @@ export default {
                 date: data[i]["created_at"],
                 update: data[i]["updated_at"],
                 mail: data[i]["email"],
+                verify: data[i]["verifyemail"],
                 online: on_status,
                 status: role,
               },
@@ -1227,6 +1447,7 @@ export default {
                 date: data[i]["created_at"],
                 update: data[i]["updated_at"],
                 mail: data[i]["email"],
+                verify: data[i]["verifyemail"],
                 online: on_status,
                 status: role,
               },
@@ -1249,6 +1470,7 @@ export default {
                 date: data[i]["created_at"],
                 update: data[i]["updated_at"],
                 mail: data[i]["email"],
+                verify: data[i]["verifyemail"],
                 online: on_status,
                 status: role,
               },
@@ -1271,6 +1493,7 @@ export default {
               date: data[i]["created_at"].split("T","1"),
               update: date_now_2,
               mail: data[i]["email"],
+              verify: data[i]["verifyemail"],
               status: role,
             },
           ];
@@ -1295,18 +1518,19 @@ export default {
       this.online_user = user_online
     },
     async update(data) {
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       var API_Data = await this.axios.get(
         process.env.VUE_APP_API + "/api/users/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
-        // "https://meet.one.th/secret/api/users/data"
       );
       var data_api = API_Data.data.data;
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
-        // "https://meet.one.th/secret/api/roles/data"
       );
       var roles = API_Roles.data.data;
       for (let i = 0; i < this.all_data.length; i++) {
@@ -1328,7 +1552,40 @@ export default {
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/updatestatus",
         data_target,{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
+        }
+      );
+      this.admin = [];
+      this.host = [];
+      this.users = [];
+      this.citizen = [];
+      this.alldata();
+    },
+    async edit_verifye(data) {
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
+      var API_Data = await this.axios.get(
+        process.env.VUE_APP_API + "/api/users/data",{
+          headers: headers_token
+        }
+      );
+      var data_api = API_Data.data.data;
+      for (let i = 0; i < this.all_data.length; i++) {
+        if (data["user"] == this.all_data[i]["user"]) {
+          var data_id = this.all_data[i]["id"];
+        }
+      }
+      for (let j = 0; j < data_api.length; j++) {
+        if (data_id == data_api[j]["_id"]) {
+          var data_target = data_api[j];
+        }
+      }
+      data_target["verifyemail"] = data.verify
+      await this.axios.put(
+        process.env.VUE_APP_API + "/api/users/updatestatus",
+        data_target,{
+          headers: headers_token
         }
       );
       this.admin = [];
@@ -1338,13 +1595,16 @@ export default {
       this.alldata();
     },
     async delete(data) {
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/disable",{
           username: data.user,
           email: data.mail,
           disable: true,
         },{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       this.admin = [];
@@ -1396,6 +1656,7 @@ export default {
     close_admin() {
       this.dialog_admin = false;
       this.dialog_W_delete_A = false;
+      this.dialogemail_admin = false;
       this.$nextTick(() => {
         this.editedItem_admin = Object.assign({}, this.defaultItem);
         this.editedIndex_admin = -1;
@@ -1404,6 +1665,7 @@ export default {
     close_host() {
       this.dialog_host = false;
       this.dialog_W_delete_H = false;
+      this.dialogemail_host = false;
       this.$nextTick(() => {
         this.editedItem_host = Object.assign({}, this.defaultItem);
         this.editedIndex_host = -1;
@@ -1412,6 +1674,7 @@ export default {
     close_users() {
       this.dialog_users = false;
       this.dialog_W_delete_U = false;
+      this.dialogemail_users = false;
       this.$nextTick(() => {
         this.editedItem_users = Object.assign({}, this.defaultItem);
         this.editedIndex_users = -1;
@@ -1420,6 +1683,7 @@ export default {
     close_citizen() {
       this.dialog_citizen = false;
       this.dialog_W_delete_C = false;
+      this.dialogemail_citizen = false;
       this.$nextTick(() => {
         this.editedItem_citizen = Object.assign({}, this.defaultItem);
         this.editedIndex_citizen = -1;
@@ -1513,6 +1777,68 @@ export default {
       this.delete(this.users[this.editedIndex_users]);
       this.close_users();
     },
+    editverify_admin(item) {
+      if (this.limit == true) {
+        this.verifyeIndex_admin = this.admin.indexOf(item);
+        this.editverifye_admin = Object.assign({}, item);
+        this.dialogemail_admin = true;
+      } else {
+        this.alert = true;
+      }
+    },
+    editverify_host(item) {
+      if (this.limit == true) {
+        this.verifyeIndex_host = this.host.indexOf(item);
+        this.editverifye_host = Object.assign({}, item);
+        this.dialogemail_host = true;
+      } else {
+        this.alert = true;
+      }
+    },
+    editverify_citizen(item) {
+      if (this.limit == true) {
+        this.verifyeIndex_citizen = this.citizen.indexOf(item);
+        this.editverifye_citizen = Object.assign({}, item);
+        this.dialogemail_citizen = true;
+      } else {
+        this.alert = true;
+      }
+    },
+    editverify_users(item) {
+      if (this.limit == true) {
+        this.verifyeIndex_users = this.users.indexOf(item);
+        this.editverifye_users = Object.assign({}, item);
+        this.dialogemail_users = true;
+      } else {
+        this.alert = true;
+      }
+    },
+    verifye_admin() {
+      Object.assign(this.admin[this.verifyeIndex_admin],this.editverifye_admin);
+      this.edit_verifye(this.admin[this.verifyeIndex_admin]);
+      this.close_admin();
+    },
+    verifye_host() {
+      Object.assign(this.host[this.verifyeIndex_host],this.editverifye_host);
+      this.edit_verifye(this.host[this.verifyeIndex_host]);
+      this.close_host();
+    },
+    verifye_citizen() {
+      Object.assign(this.citizen[this.verifyeIndex_citizen],this.editverifye_citizen);
+      this.edit_verifye(this.citizen[this.verifyeIndex_citizen]);
+      this.close_citizen();
+    },
+    verifye_users() {
+      Object.assign(this.users[this.verifyeIndex_users],this.editverifye_users);
+      this.edit_verifye(this.users[this.verifyeIndex_users]);
+      this.close_users();
+    },
+    session_exp() {
+      var exp = new Date(this.$session.get("data").exp * 1000)
+      if (new Date() > exp){
+        this.$router.push({ path: "/login" });
+      }
+    }
   },
 };
 </script>

@@ -6,11 +6,13 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueApexCharts from 'vue-apexcharts'
 import VueSessionStorage from 'vue-sessionstorage'
+import VueCryptojs from 'vue-cryptojs'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.use(VueApexCharts)
 Vue.use(VueSessionStorage)
+Vue.use(VueCryptojs)
 
 new Vue({
   router,

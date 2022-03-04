@@ -188,15 +188,18 @@ export default {
     async alldata() {
       var data_ALL = [];
       var role;
+      const headers_token = {
+          Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       var API_Data = await this.axios.get(
           process.env.VUE_APP_API + "/api/users/data",{
-            headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+            headers: headers_token
           }
       );
       var data = API_Data.data.data;
       var API_Roles = await this.axios.get(
           process.env.VUE_APP_API + "/api/roles/data",{
-            headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+            headers: headers_token
           }
       );
       var roles = API_Roles.data.data;
@@ -222,25 +225,31 @@ export default {
       }
     },
     async delete(data) {
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       await this.axios.post(
         process.env.VUE_APP_API + "/api/users/delete",{
           username: data.user,
           email: data.email,
         },{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       this.Delete = [];
       this.alldata();
     },
     async restore(data) {
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       await this.axios.put(
         process.env.VUE_APP_API + "/api/users/disable",{
           username: data.user,
           email: data.email,
           disable: false,
         },{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       this.Delete = [];

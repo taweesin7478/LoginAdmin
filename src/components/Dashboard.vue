@@ -27,8 +27,29 @@
                       <!--<v-btn text elevation="4" medium small v-on:click="data_all('today')">
                       TODAY
                       </v-btn>-->
-                      <div id="app">
-                        <input type="date" v-model="date" value="date" @change="select_data(date)"/>
+                      <v-btn text elevation="4" medium small v-show="!rate" v-on:click="rate_on()">
+                      Rate OFF
+                      </v-btn>
+                      <v-btn text elevation="4" small color="primary" v-show="rate" v-on:click="rate_off()" @change="select_data(date)">
+                      Rate ON
+                      </v-btn>
+                      <div id="app" v-show="rate">
+                        <v-card width="100%" height="100%" outlined>
+                          <input type="date" v-model="rate_date_S" value="rate_date" @change="select_rate_S(rate_date_S)"/>
+                        </v-card>
+                      </div>
+                      <div id="app" v-show="rate">
+                        --
+                      </div>
+                      <div id="app" v-show="rate">
+                        <v-card width="100%" height="100%" outlined>
+                          <input type="date" v-model="rate_date_E" value="rate_date" @change="select_rate_E(rate_date_E)"/>
+                        </v-card>
+                      </div>
+                      <div id="app" v-show="!rate">
+                        <v-card width="100%" height="100%" outlined>
+                          <input type="date" v-model="date" value="date" outlined @change="select_data(date)"/>
+                        </v-card>
                       </div>
                       <v-btn text elevation="4" medium small v-show="!hidden" v-on:click="data_all('ALL')">
                       ADD ALL
@@ -131,6 +152,7 @@
                         <v-toolbar color="white" dense flat>
                           <span style="font-size: 16px;">History</span>
                           <v-spacer></v-spacer>
+                          <v-btn text elevation="4" small v-on:click="onExport()">Export</v-btn>
                         </v-toolbar>
                         <v-divider></v-divider>
                         <v-card-title>
@@ -148,7 +170,7 @@
                           :search="search"
                         >
                         <template v-slot:top>
-                          <v-dialog v-model="History" max-width="600px">
+                          <v-dialog v-model="History" max-width="800px">
                           <v-card>
                             <v-card-title>
                               <span class="headline">{{
@@ -161,6 +183,7 @@
                                     <v-data-table
                                       :headers="header_member"
                                       :items="desserts"
+                                      :sort-by="['join_at']"
                                     ></v-data-table>
                                     </v-col>
                                   </v-row>
@@ -220,6 +243,12 @@
               </v-layout>
             </v-card>
           </v-row>
+          <v-overlay :value="overlay">
+            <v-progress-circular
+              indeterminate
+              size="64"
+            ></v-progress-circular>
+          </v-overlay>
         </v-container>
       </v-card>
     </v-flex>
@@ -228,6 +257,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts";
+import XLSX from 'xlsx'
 
 export default {
   components: {
@@ -237,11 +267,18 @@ export default {
     return {
       History: false,
       hidden: false,
+      rate: false,
       Record: false,
       total_user: 0,
+      overlay: false,
       total_meeting: 0,
       date: new Date().toISOString().substr(0, 10),
+      today: "",
+      rate_date_S: new Date().toISOString().substr(0, 10),
+      rate_date_E: new Date().toISOString().substr(0, 10),
+      rate_show: "",
       date_show: "",
+      api_user:[],
       series: [1 , 1 , 1],
       chartOptions: {
         labels: ["Business", "Citizen", "User"],
@@ -272,17 +309,21 @@ export default {
       headers: [
         { text: 'ชื่อห้อง' , align: 'start' , filterable: false , value: 'room_name'},
         { text: 'ชื่อเจ้าของห้อง', value: 'owner' },
+        { text: "Company", value: "company" },
         { text: 'วันที่ประชุม' , value: 'date'},
         { text: 'start time' , value: 's_time'},
         { text: 'end time' , value: 'e_time'},
         { text: 'จำนวนผู้ร่วมประชุม' , value: 'attendee'},
         { text: "รายชื่อผู้ร่วมประชุม", value: "member", sortable: false },
         { text: "record", value: "file", sortable: false },
+        { text: "IP", value: "ip", sortable: false },
+        { text: "Meeting-ID", value: "mid", sortable: false },
       ],
       header_member: [
         { text: 'รายชื่อ' , align: 'start' , filterable: false , value: 'member_name'},
-        { text: 'เวลาเข้าห้องประชุม', value: 'join_at' },
-        { text: 'เวลาออกห้องประชุม', value: 'out_at' },
+        { text: 'เวลาเข้าห้องประชุม', value: 'join_at' , width:"100px" },
+        { text: 'เวลาออกห้องประชุม', value: 'out_at' , width:"100px" },
+        { text: "IP", value: "ip", sortable: false , width:"200px"}
       ],
       header_record: [
         { text: 'ชื่อไฟล์' , align: 'start' , filterable: false , value: 'file_name'},
@@ -296,12 +337,25 @@ export default {
   watch: {
     dialog_admin(val) {
       val || this.close_admin();
-    },
+    }
   },
   created() {
-    this.date_time();
+    this.date_API();
   },
   methods: {
+    async date_API(){
+      this.session_exp()
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
+      var API_Data = await this.axios.get(
+        process.env.VUE_APP_API + "/api/users/data",{
+          headers: headers_token
+        }
+      );
+      this.api_user = API_Data.data.data;
+      this.date_time();
+    },
     date_time(type){
       var data_type = type
       if( data_type == undefined){
@@ -326,12 +380,13 @@ export default {
       // var timenow_Minut = timenow.getMinutes();
       // var timenow_Secon = timenow.getSeconds();
       // var time_begin = timenow_Hours + ":" + timenow_Minut + ":" + timenow_Secon;
-
       if(data_type == "today"){
         this.date_show = day_begin;
+        this.rate_show = day_begin;
       }else{
         this.date_show = "ALL";
       }
+      this.today = day_begin
       this.User_dashboard();
       this.meeting_dashboard();
     },
@@ -342,17 +397,13 @@ export default {
       var N_user = 0;
       var total_push = [];
       var data_CD = [];
-      var API_Data = await this.axios.get(
-        process.env.VUE_APP_API + "/api/users/data",{
-        // "https://meet.one.th/secret/api/users/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
-        }
-      );
-      var data = API_Data.data.data;
+      var data = this.api_user;
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
       var API_Roles = await this.axios.get(
         process.env.VUE_APP_API + "/api/roles/data",{
-        // "https://meet.one.th/secret/api/roles/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       var roles = API_Roles.data.data;
@@ -363,7 +414,7 @@ export default {
         data_CD.push([data[k]["role"] , date])
       }
       for (let i = 0; i < data_CD.length; i++) {
-        if (this.date_show == data_CD[i][1]) {
+        if (this.date_show == "ALL") {
           for (let j = 0; j < roles.length; j++) {
             if (data_CD[i][0] == roles[j]["_id"]) {
               var role = roles[j]["name"];
@@ -382,7 +433,7 @@ export default {
             N_citizen = N_citizen + 1;
             N_total = N_total + 1;
           }
-        }else if (this.date_show == "ALL") {
+        }else {
           for (let j = 0; j < roles.length; j++) {
             if (data_CD[i][0] == roles[j]["_id"]) {
               role = roles[j]["name"];
@@ -408,40 +459,68 @@ export default {
       this.series = total_push
     },
     async meeting_dashboard(){
+      this.session_exp()
       var N_meet = 0;
       var data_ALL = [];
       var attendee_All = [];
-      var record_ALL = []
-      var history_rooms = await this.axios.get(
+      var record_ALL = [];
+      var Company_user;
+      this.meeting = [];
+      var room = [];
+      const headers_token = {
+        Authorization: 'Bearer '+ this.$session.get('jwt')
+      }
+      var history_rooms = await this.axios.post(
         process.env.VUE_APP_API + "/api/History_rooms/data",{
-        // "https://meet.one.th/secret/api/History_rooms/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          date : this.date_show,
+          rate : this.rate_show
+        },{
+          headers: headers_token
         }
       );
       var data = history_rooms.data.data
       var record = await this.axios.get(
         process.env.VUE_APP_API + "/api/onebox/record",{
-        // "https://meet.one.th/secret/api/History_rooms/data",{
-          headers: { 'Authorization' : `token ${process.env.VUE_APP_TOKEN}` }
+          headers: headers_token
         }
       );
       var file = record.data.recore
+      var data_user = this.api_user;
       for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < data[i]["member"].length; j++) {
-          if(data[i]["member"][j]["email"] != undefined){
-            attendee_All.push({
-              attendee: data[i]["member"][j]["email"].split("@")[0],
-              join_at: data[i]["member"][j]["join_at"],
-              out_at: data[i]["member"][j]["out_at"],
-            })
+          if(data[i]["member"][j]["email"] != undefined && data[i]["member"][j]["email"].code == undefined){
+            if(data[i]["member"][j]["ip"] == undefined){
+              attendee_All.push({
+                attendee: data[i]["member"][j]["email"].split("@")[0],
+                join_at: data[i]["member"][j]["join_at"],
+                out_at: data[i]["member"][j]["out_at"],
+                ip: "",
+              })
+            } else {
+              attendee_All.push({
+                attendee: data[i]["member"][j]["email"].split("@")[0],
+                join_at: data[i]["member"][j]["join_at"],
+                out_at: data[i]["member"][j]["out_at"],
+                ip: data[i]["member"][j]["ip"],
+              })
+            }
           }
-          if(data[i]["member"][j]["attendee"] != undefined){
-            // attendee_All.push(data[i]["member"][j]["attendee"].split("-")[0])
+          if(data[i]["member"][j]["attendee"] != undefined && data[i]["member"][j]["attendee"].code == undefined){
+            if(data[i]["member"][j]["ip"] == undefined){
             attendee_All.push({
               attendee: data[i]["member"][j]["attendee"].split("-")[0],
               join_at: data[i]["member"][j]["join_at"],
               out_at: data[i]["member"][j]["out_at"],
+              ip: "",
             })
+            } else {
+              attendee_All.push({
+                attendee: data[i]["member"][j]["attendee"].split("-")[0],
+                join_at: data[i]["member"][j]["join_at"],
+                out_at: data[i]["member"][j]["out_at"],
+                ip: data[i]["member"][j]["ip"],
+              })
+            }
           }
         }
         for (let k = 0; k < file.length; k++) {
@@ -450,68 +529,112 @@ export default {
               name : file[k]["filename"],
               size : file[k]["size"]
             })
-          }else{
-            record_ALL.push("notRecord")
           }
         }
-        if (this.date_show == data[i]["date"]) {
+        for (let l = 0; l < data_user.length; l++) {
+          if(data_user[l]["username"] == data[i]["username"]){
+            Company_user = data_user[l]["company"]
+          }
+        }
+        if (this.date_show == "ALL") {
+          if(record_ALL.length == 0){
+            record_ALL.push("notRecord")
+          }
           data_ALL = [
             {
               room_name: data[i]["name"],
               owner: data[i]["username"],
+              company:Company_user,
               date: data[i]["date"],
               s_time: data[i]["start_time"],
               e_time: data[i]["end_time"],
               attendee: data[i]["attendee"],
               member: attendee_All,
-              file: record_ALL
+              file: record_ALL,
+              ip: data[i]["ip"],
+              mid: data[i]["meeting_id"]
             },
           ];
           N_meet = N_meet + 1;
-          this.meeting.push(data_ALL[0]);
-        }else if (this.date_show == "ALL") {
+          room.push(data_ALL[0]);
+        }else {
+          if(record_ALL.length == 0){
+            record_ALL.push("notRecord")
+          }
           data_ALL = [
             {
               room_name: data[i]["name"],
               owner: data[i]["username"],
+              company:Company_user,
               date: data[i]["date"],
               s_time: data[i]["start_time"],
               e_time: data[i]["end_time"],
               attendee: data[i]["attendee"],
               member: attendee_All,
-              file: record_ALL
+              file: record_ALL,
+              ip: data[i]["ip"],
+              mid: data[i]["meeting_id"]
             },
           ];
           N_meet = N_meet + 1;
-          this.meeting.push(data_ALL[0]);
+          room.push(data_ALL[0]);
         }
         attendee_All = [];
         record_ALL = [];
       }
       this.total_meeting = N_meet
+      this.meeting = room
+      this.overlay = false;
     },
     data_all_name (item) {
       this.desserts = [];
       var member = [];
       for (let i = 0; i < item["item"]["member"].length; i++) {
-        if(item["item"]["member"][i]["out_at"] != ""){
-          member = [
-            {
-              member_name: item["item"]["member"][i]["attendee"],
-              join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
-              out_at: new Date(item["item"]["member"][i]["out_at"]).toLocaleTimeString(),
-            },
-          ];
-        } else {
-          member = [
-            {
-              member_name: item["item"]["member"][i]["attendee"],
-              join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
-              out_at: "",
-            },
-          ];
+        if(typeof item["item"]["member"][i]["join_at"] == "object"){
+          for(let j = 0; j < item["item"]["member"][i]["join_at"].length; j++){
+            if(item["item"]["member"][i]["out_at"][j] != undefined){
+              member = [
+                {
+                  member_name: item["item"]["member"][i]["attendee"],
+                  join_at: new Date(item["item"]["member"][i]["join_at"][j]).toLocaleTimeString(),
+                  out_at: new Date(item["item"]["member"][i]["out_at"][j]).toLocaleTimeString(),
+                  ip: item["item"]["member"][i]["ip"][j]
+                },
+              ];
+            } else {
+              member = [
+                {
+                  member_name: item["item"]["member"][i]["attendee"],
+                  join_at: new Date(item["item"]["member"][i]["join_at"][j]).toLocaleTimeString(),
+                  out_at: "",
+                  ip: item["item"]["member"][i]["ip"][j]
+                },
+              ];
+            }
+            this.desserts.push(member[0]);
+          }
+        }else {
+          if(item["item"]["member"][i]["out_at"] != ""){
+            member = [
+              {
+                member_name: item["item"]["member"][i]["attendee"],
+                join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
+                out_at: new Date(item["item"]["member"][i]["out_at"]).toLocaleTimeString(),
+                ip: item["item"]["member"][i]["ip"]
+              },
+            ];
+          } else {
+            member = [
+              {
+                member_name: item["item"]["member"][i]["attendee"],
+                join_at: new Date(item["item"]["member"][i]["join_at"]).toLocaleTimeString(),
+                out_at: "",
+                ip: item["item"]["member"][i]["ip"]
+              },
+            ];
+          }
+          this.desserts.push(member[0]);
         }
-        this.desserts.push(member[0]);
       }
       this.History = true;
     },
@@ -526,8 +649,8 @@ export default {
               size: item["item"]["file"][i]["size"]
             },
           ];
+          this.Recordfile.push(Recorddata[0]);
         }
-        this.Recordfile.push(Recorddata[0]);
       }else{
         Recorddata = [
           {
@@ -540,19 +663,147 @@ export default {
       this.Record = true;
     },
     select_data (value) {
+      this.overlay = true;
       this.meeting = [];
       this.hidden = false;
       this.date_show = value.split("-")[2]+"/"+value.split("-")[1]+"/"+value.split("-")[0]
+      this.rate_show = this.date_show
+      this.rate_date_S = value
+      this.rate_date_E = value
+      this.User_dashboard();
+      this.meeting_dashboard();
+    },
+    select_rate_S (value) {
+      this.overlay = true;
+      this.meeting = [];
+      this.hidden = false;
+      this.rate_show = value.split("-")[2]+"/"+value.split("-")[1]+"/"+value.split("-")[0]
+      if(this.date_show == "ALL"){
+        this.date_show = this.today;
+      }
+      this.User_dashboard();
+      this.meeting_dashboard();
+    },
+    select_rate_E (value) {
+      this.overlay = true;
+      this.meeting = [];
+      this.hidden = false;
+      this.date_show = value.split("-")[2]+"/"+value.split("-")[1]+"/"+value.split("-")[0]
+      this.date = value
       this.User_dashboard();
       this.meeting_dashboard();
     },
     data_all:function (data) {
+      this.overlay = true;
       this.meeting = [];
       this.hidden = true;
+      this.rate = false;
       this.date_show = data;
+      this.rate_date_S = new Date().toISOString().substr(0, 10);
+      this.rate_date_E = new Date().toISOString().substr(0, 10);
       this.User_dashboard();
       this.meeting_dashboard();
     },
+    rate_on (){
+      this.rate = true;
+    },
+    rate_off (){
+      this.rate = false;
+      this.overlay = true;
+      this.select_data(this.date)
+    },
+    onExport() {
+      var from = []
+      var excal = []
+      var sum = []
+      for (let i = 0; i < this.meeting.length; i++) {
+        var sum_time = this.sumtime(this.meeting[i]["s_time"],this.meeting[i]["e_time"])
+        from = [
+            {
+              ลำดับ : i+1,
+              ชื่อห้อง : this.meeting[i]["room_name"],
+              ชื่อผู้ใช้ : this.meeting[i]["owner"],
+              Company : this.meeting[i]["company"],
+              วันที่ประชุม : this.meeting[i]["date"],
+              จำนวนผู้ร่วมประชุม: this.meeting[i]["attendee"],
+              Start : this.meeting[i]["s_time"],
+              Stop : this.meeting[i]["e_time"],
+              เวลารวม : sum_time
+            },
+          ];
+        excal.push(from[0])
+        sum.push(sum_time)
+      }
+      var st = this.arraytime(sum)
+      from = [
+            {
+              ลำดับ : "เวลารวมทั้งหมด",
+              ชื่อห้อง : "",
+              ชื่อผู้ใช้ : "",
+              Company : "",
+              วันที่ประชุม : "",
+              จำนวนผู้ร่วมประชุม: "",
+              Start : "",
+              Stop : "",
+              เวลารวม : st
+            },
+          ];
+      excal.push(from[0])
+      var merge = [{ s: { r: this.meeting.length+1, c: 0 }, e: { r: this.meeting.length+1, c: 7 } },];
+      var dataWS = XLSX.utils.json_to_sheet(excal)
+      var wb = XLSX.utils.book_new()
+      dataWS["!merges"] = merge;
+      dataWS["A1"].s = {
+        alignment: {
+            vertical: "center",
+            horizontal: "center",
+            wrapText: true
+        }
+      }
+      XLSX.utils.book_append_sheet(wb, dataWS)
+      XLSX.writeFile(wb,'History_'+this.date_show+'_meeting_'+this.total_meeting+'.xlsx')
+    },
+    sumtime(S,E){
+      if(E != ""){
+        var start = S.split(":");
+        var end = E.split(":");
+        var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+        var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+        var diff = endDate.getTime() - startDate.getTime();
+        var hours = Math.floor(diff / 1000 / 60 / 60);
+        diff -= hours * 1000 * 60 * 60;
+        var minutes = Math.floor(diff / 1000 / 60);
+        if (hours < 0){
+          hours = hours + 24;
+        }
+        var sum = (hours <= 9 ? "0" : "") + hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+        return sum
+      } else {
+        return ""
+      }
+    },
+    arraytime(myArray){
+      var hours = 0
+      var minutes = 0
+      for(var i in myArray){
+      if(myArray[i] != ""){
+        hours = hours + parseInt(myArray[i].substring(0, 2))
+        minutes = minutes + parseInt(myArray[i].substring(3, 5))
+      }
+      }
+      if(minutes > 59){
+        hours = hours + parseInt(minutes / 60);
+        minutes = parseInt(minutes % 60);
+      }
+      var sum = hours + ":" + minutes;
+      return sum
+    },
+    session_exp() {
+      var exp = new Date(this.$session.get("data").exp * 1000)
+      if (new Date() > exp){
+        this.$router.push({ path: "/login" });
+      }
+    }
   }
 };
 </script>

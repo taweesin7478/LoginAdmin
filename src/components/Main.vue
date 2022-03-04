@@ -58,6 +58,9 @@
                 <v-list-item v-on:click="Remove()" v-show="hidden">
                   <v-list-item-title class="Remove">จัดการลบ User</v-list-item-title>
                 </v-list-item>
+                <v-list-item v-on:click="Uncode()" v-show="hidden">
+                  <v-list-item-title class="Uncode">ถอดรหัส</v-list-item-title>
+                </v-list-item>
                 <v-list-item v-on:click="logout()">
                   <v-list-item-title class="logout">ออกจากระบบ</v-list-item-title>
                 </v-list-item>
@@ -165,12 +168,12 @@ export default {
     ],
   }),
   mounted() {
-    if (!this.$session.get("id") || !this.$session.get("user")) {
+    if (!this.$session.get("token")) {
       this.$router.push({ path: "/login" });
     }
-    var data = this.$session.get("data");
-    this.account_name = data["user"];
-    this.limit = data["No_limit"]
+    var data = this.$session.get('data')
+    this.account_name = data.username;
+    this.limit = data.limit
     if (this.limit == true) {
       this.hidden = true
     }else{
@@ -189,6 +192,9 @@ export default {
     },
     Remove() {
       this.$router.push({ path: "/Remove" });
+    },
+    Uncode() {
+      this.$router.push({ path: "/Uncode" });
     }
   },
 };
